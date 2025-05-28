@@ -1,6 +1,8 @@
 <?php
 
-namespace Kabiroman\AEM;
+namespace Kabiroman\AEM\Adapter;
+
+use Kabiroman\AEM\ClassMetadata;
 
 interface EntityDataAdapterProvider
 {

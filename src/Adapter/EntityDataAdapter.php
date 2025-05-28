@@ -1,6 +1,6 @@
 <?php
 
-namespace Kabiroman\AEM;
+namespace Kabiroman\AEM\Adapter;
 
 interface EntityDataAdapter
 {
