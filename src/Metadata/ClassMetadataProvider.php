@@ -1,6 +1,8 @@
 <?php
 
-namespace Kabiroman\AEM;
+namespace Kabiroman\AEM\Metadata;
+
+use Kabiroman\AEM\ClassMetadata;
 
 interface ClassMetadataProvider
 {
