@@ -1,6 +1,6 @@
 <?php
 
-namespace Kabiroman\AEM\Adapter;
+namespace Kabiroman\AEM\DataAdapter;
 
 use function Symfony\Component\String\u;
 
