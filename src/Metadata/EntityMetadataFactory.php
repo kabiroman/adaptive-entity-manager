@@ -2,11 +2,11 @@
 
 namespace Kabiroman\AEM\Metadata;
 
-use App\Persistence\EntityProxyTrait;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\Proxy;
 use Kabiroman\AEM\Config;
+use Kabiroman\AEM\EntityProxy\EntityProxyTrait;
 use Kabiroman\AEM\ProxyInterface;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
