@@ -113,6 +113,132 @@ The system supports lazy loading through proxy objects, automatically generating
 
 Comprehensive metadata handling for entity mapping and relationship management.
 
+### Metadata Management
+
+Comprehensive metadata handling for entity mapping and relationship management. Here's an example of entity metadata configuration:
+
+Comprehensive example:
+```php
+<?php
+
+namespace App\Metadata;
+
+use Kabiroman\AEM\Metadata\AbstractClassMetadata;
+use App\Entity\User;
+use App\Entity\Role;
+use App\Entity\Post;
+use App\DataAdapter\UserDataAdapter;
+
+class UserMetadata extends AbstractClassMetadata
+{
+    public function __construct()
+    {
+        $this->metadata = [
+            User::class => [
+                // Specify the data adapter for this entity
+                'dataAdapterClass' => UserDataAdapter::class,
+                
+                // Define identifier fields
+                'id' => [
+                    'id' => [
+                        'type' => 'integer',
+                        'column' => 'user_id',
+                        'generator' => 'AUTO'
+                    ]
+                ],
+                
+                // Define regular fields
+                'fields' => [
+                    'email' => [
+                        'type' => 'string',
+                        'column' => 'email_address',
+                        'nullable' => false
+                    ],
+                    'username' => [
+                        'type' => 'string',
+                        'column' => 'username',
+                        'nullable' => false
+                    ],
+                    'createdAt' => [
+                        'type' => 'datetime',
+                        'column' => 'created_at',
+                        'nullable' => false
+                    ]
+                ],
+                
+                // Define relationships
+                'hasOne' => [
+                    'role' => [
+                        'targetEntity' => Role::class,
+                        'joinColumn' => [
+                            'name' => 'role_id',
+                            'referencedColumnName' => 'id'
+                        ],
+                        'fetch' => 'LAZY'
+                    ]
+                ],
+                'hasMany' => [
+                    'posts' => [
+                        'targetEntity' => Post::class,
+                        'mappedBy' => 'author',
+                        'fetch' => 'LAZY'
+                    ]
+                ],
+                
+                // Define lifecycle callbacks
+                'lifecycleCallbacks' => [
+                    'prePersist' => ['setCreatedAt']
+                ]
+            ]
+        ];
+    }
+}
+```
+
+This metadata configuration provides:
+- Clear mapping between database columns and entity properties
+- Relationship management (One-to-One, One-to-Many)
+- Automatic lifecycle event handling
+- Type safety through explicit type definitions
+- Flexible data adapter integration
+
+User entity class that this metadata would describe:
+
+```php
+<?php
+
+namespace App\Entity;
+
+use DateTime;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+
+class User
+{
+    private ?int $id = null;
+    private string $email;
+    private string $username;
+    private string $password;
+    private DateTime $createdAt;
+    private bool $isActive = true;
+    
+    private Role $role;
+    private Collection $posts;
+    
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+    }
+    
+    // Lifecycle callback
+    public function setCreatedAt(): void
+    {
+        $this->createdAt = new DateTime();
+    }
+    
+    // Getters and setters...
+}
+```
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
