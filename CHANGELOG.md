@@ -1,0 +1,52 @@
+# Changelog
+
+All notable changes to the Adaptive Entity Manager package will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v1.0.1] - 2025-05-29
+
+### Fixed
+- Fixed DefaultEntityMetadataProvider implementation for proper metadata class resolution
+- Enhanced README.md with comprehensive documentation
+- Improved metadata class name resolution logic
+- Fixed namespace handling in metadata provider
+
+### Documentation
+- Added detailed installation instructions
+- Expanded usage examples
+- Added configuration documentation
+- Improved API documentation
+- Added examples for custom data adapters
+- Enhanced metadata configuration guide
+
+## [v1.0.0] - 2024-05-28
+
+### Added
+- Initial release of Adaptive Entity Manager
+- Core entity management functionality
+- Support for multiple data sources through adapters
+- Entity metadata system
+- Transaction management
+- Lazy loading through proxy objects
+- Flexible repository system
+- Unit of Work implementation
+- Entity lifecycle callbacks
+- Relationship management (One-to-One, One-to-Many)
+
+### Dependencies
+- PHP 8.1 or higher
+- doctrine/persistence: ^3.0 || ^4.0
+- laminas/laminas-code: ^4.0
+- psr/container: ^1.1 || ^2.0
+- symfony/cache: ^6.0 || ^7.0
+- symfony/string: ^6.0 || ^7.0
+
+## Support
+
+If you discover any security-related issues, please email kabirovruslan@gmail.com instead of using the issue tracker.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
