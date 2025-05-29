@@ -18,6 +18,6 @@ class DefaultEntityMetadataProvider implements ClassMetadataProvider
 
     private function getMetadataClassName(string $entityName): string
     {
-        return str_replace('\\Entity\\', '\\Orm\\Metadata\\', $entityName) . 'Metadata';
+        return str_replace('\\Entity\\', '\\Metadata\\', $entityName) . 'Metadata';
     }
 }
