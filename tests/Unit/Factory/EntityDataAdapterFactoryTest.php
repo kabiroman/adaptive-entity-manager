@@ -12,6 +12,7 @@ use Kabiroman\AEM\DataAdapter\EntityDataAdapterFactory;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\InvalidArgumentException;
+use ReflectionException;
 
 class EntityDataAdapterFactoryTest extends TestCase
 {
@@ -20,6 +21,7 @@ class EntityDataAdapterFactoryTest extends TestCase
 
     /**
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function setUp(): void
     {
@@ -30,8 +32,8 @@ class EntityDataAdapterFactoryTest extends TestCase
         );
         $this->classMetadata = (new EntityMetadataFactory(
             new Config(
-                __DIR__ . '/../Entity',
-                'App\\Tests\\Entity\\',
+                __DIR__ . '/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
             ),
             new MockClassMetadataProvider()
         ))->getMetadataFor(MockEntity::class);

@@ -10,17 +10,21 @@ use Kabiroman\AEM\Config;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
 use PHPUnit\Framework\MockObject\Generator\MockClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use Throwable;
 
 class EntityMetadataFactoryTest extends TestCase
 {
     private readonly EntityMetadataFactory $entityMetadataFactory;
 
+    /**
+     * @throws ReflectionException
+     */
     public function setUp(): void
     {
         $this->entityMetadataFactory = new EntityMetadataFactory(new Config(
-            __DIR__.'/../Entity',
-            'App\\Tests\\Entity\\',
+            __DIR__ . '/../../Mock/Entity',
+            'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
         ), new MockClassMetadataProvider());
         parent::setUp();
     }
@@ -31,6 +35,7 @@ class EntityMetadataFactoryTest extends TestCase
     }
 
     /**
+     * @throws ReflectionException
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function testGetMetadataFor(): void
@@ -50,6 +55,9 @@ class EntityMetadataFactoryTest extends TestCase
         }
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetAllMetadata(): void
     {
         $result = $this->entityMetadataFactory->getAllMetadata();

@@ -8,7 +8,6 @@ use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapter;
 use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapterProvider;
 use Kabiroman\AEM\AdaptiveEntityManager;
 use Kabiroman\AEM\Config;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class EntityRepositoryTest extends TestCase
@@ -16,15 +15,12 @@ class EntityRepositoryTest extends TestCase
     private MockEntityDataAdapter $adapter;
     private AdaptiveEntityManager $em;
 
-    /**
-     * @throws Exception
-     */
     protected function setUp(): void
     {
         $this->em = new AdaptiveEntityManager(
             new Config(
-                __DIR__.'/../Entity',
-                'App\\Tests\\Entity\\',
+                __DIR__ . '/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider(

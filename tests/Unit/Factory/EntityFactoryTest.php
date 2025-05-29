@@ -24,8 +24,8 @@ class EntityFactoryTest extends TestCase
     {
         $this->entityFactory = new EntityFactory(
             $em = new AdaptiveEntityManager(new Config(
-                __DIR__.'/../Entity',
-                'App\\Tests\\Entity\\',
+                __DIR__ . '/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
             ), new MockClassMetadataProvider(), new MockEntityDataAdapterProvider()),
             new EntityProxyFactory($em)
         );

@@ -24,8 +24,8 @@ class UnitOfWorkTest extends TestCase
     {
         self::$em = new AdaptiveEntityManager(
             new Config(
-                __DIR__.'/../Entity',
-                'App\\Tests\\Entity\\',
+                __DIR__ . '/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider(new MockEntityDataAdapter()),
