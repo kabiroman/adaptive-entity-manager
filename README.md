@@ -105,19 +105,185 @@ try {
 
 Create custom adapters for different data sources by implementing the appropriate interfaces in the `DataAdapter` namespace.
 
-### Entity Proxies
+### Data Adapter Example
 
-The system supports lazy loading through proxy objects, automatically generating proxy classes when needed.
+The Adaptive Entity Manager allows you to create custom data adapters for different data sources. Here's a simple example of implementing a REST API data adapter for a User entity.
+
+#### Basic Implementation
+
+```php
+<?php
+
+namespace Example\DataAdapter;
+
+use Kabiroman\AEM\DataAdapter\AbstractDataAdapter;
+use GuzzleHttp\ClientInterface;
+
+class UserApiAdapter extends AbstractDataAdapter
+{
+    private const API_ENDPOINT = 'https://api.example.com/users';
+
+    public function __construct(
+        private readonly ClientInterface $httpClient
+    ) {}
+
+    public function loadById(array $identifier): ?array
+    {
+        $response = $this->httpClient->request('GET', self::API_ENDPOINT . '/' . $identifier['id']);
+        $data = json_decode($response->getBody()->getContents(), true);
+        
+        if (!$data) {
+            return null;
+        }
+
+        // Convert response fields from snake_case to camelCase
+        $this->toCamelCaseParams($data);
+        
+        return $data;
+    }
+
+    public function insert(array $row): array
+    {
+        // Convert entity fields from camelCase to snake_case
+        $this->toSnakeCaseParams($row);
+        
+        $response = $this->httpClient->request('POST', self::API_ENDPOINT, [
+            'json' => $row
+        ]);
+        
+        $data = json_decode($response->getBody()->getContents(), true);
+        $this->toCamelCaseParams($data);
+        
+        return $data;
+    }
+
+    public function update(array $identifier, array $row)
+    {
+        $this->toSnakeCaseParams($row);
+        
+        $this->httpClient->request('PUT', self::API_ENDPOINT . '/' . $identifier['id'], [
+            'json' => $row
+        ]);
+    }
+
+    public function delete(array $identifier)
+    {
+        $this->httpClient->request('DELETE', self::API_ENDPOINT . '/' . $identifier['id']);
+    }
+
+    public function loadAll(
+        array $criteria = [],
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null
+    ): array {
+        $query = http_build_query(array_filter([
+            'filter' => $criteria,
+            'sort' => $orderBy,
+            'limit' => $limit,
+            'offset' => $offset,
+        ]));
+
+        $response = $this->httpClient->request('GET', self::API_ENDPOINT . '?' . $query);
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        foreach ($data as &$row) {
+            $this->toCamelCaseParams($row);
+        }
+
+        return $data;
+    }
+
+    public function refresh(array $identifier): array
+    {
+        return $this->loadById($identifier) ?? 
+            throw new \RuntimeException('Entity not found');
+    }
+}
+```
+
+#### Usage Example
+
+Here's how to use the custom data adapter with the Adaptive Entity Manager:
+
+```php
+use Kabiroman\AEM\AdaptiveEntityManager;
+use Kabiroman\AEM\Config;
+use Example\Entity\User;
+use Example\DataAdapter\UserApiAdapter;
+
+// Create HTTP client
+$httpClient = new \GuzzleHttp\Client();
+
+// Create data adapter
+$userAdapter = new UserApiAdapter($httpClient);
+
+// Configure entity manager
+$config = new Config([
+    'dataAdapters' => [
+        User::class => $userAdapter
+    ]
+]);
+
+// Create entity manager
+$entityManager = new AdaptiveEntityManager($config);
+
+// Use the entity manager
+$user = $entityManager->find(User::class, 1);
+$user->setEmail('new@example.com');
+
+$entityManager->persist($user);
+$entityManager->flush();
+```
+
+#### Key Features
+
+- **REST API Integration**: Simple implementation for RESTful APIs
+- **Automatic Case Conversion**: Handles conversion between snake_case (API) and camelCase (entities)
+- **CRUD Operations**: Complete set of Create, Read, Update, and Delete operations
+- **Query Support**: Built-in support for filtering, sorting, and pagination
+- **Clean Implementation**: Extends AbstractDataAdapter for common functionality
+
+#### Available Methods
+
+| Method | Description |
+|--------|-------------|
+| `loadById()` | Fetches a single entity by its identifier |
+| `insert()` | Creates a new entity |
+| `update()` | Updates an existing entity |
+| `delete()` | Removes an entity |
+| `loadAll()` | Retrieves multiple entities with optional filtering |
+| `refresh()` | Reloads entity data from the data source |
+
+#### Helper Methods
+
+The `AbstractDataAdapter` provides useful case conversion methods:
+
+- `toCamelCaseParams()`: Converts array keys to camelCase
+- `toSnakeCaseParams()`: Converts array keys to snake_case
+
+#### Tips
+
+1. Always handle data transformation between your storage format and entity format
+2. Implement proper error handling for API responses
+3. Use type hints and return types for better code reliability
+4. Consider implementing caching for frequently accessed data
+5. Follow RESTful conventions for API endpoints
+
+#### Next Steps
+
+- Implement custom query builders for complex filtering
+- Add caching layer for better performance
+- Implement batch operations for multiple entities
+- Add logging for debugging purposes
+- Implement retry mechanisms for failed API calls
 
 ### Metadata Management
 
 Comprehensive metadata handling for entity mapping and relationship management.
 
-### Metadata Management
+### Metadata example
 
-Comprehensive metadata handling for entity mapping and relationship management. Here's an example of entity metadata configuration:
-
-Comprehensive example:
 ```php
 <?php
 
@@ -239,6 +405,11 @@ class User
     // Getters and setters...
 }
 ```
+
+### Entity Proxies
+
+The system supports lazy loading through proxy objects, automatically generating proxy classes when needed.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
