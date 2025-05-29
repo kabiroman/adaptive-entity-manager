@@ -3,7 +3,7 @@
     "description": "Adaptive Entity Manager implementing Doctrine ObjectManager for flexible entity management across multiple data sources",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "minimum-stability": "stable",
     "authors": [
         {
@@ -19,12 +19,38 @@
         "symfony/cache": "^6.0 || ^7.0",
         "symfony/string": "^6.0 || ^7.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "mockery/mockery": "^1.6"
+    },
     "autoload": {
         "psr-4": {
             "Kabiroman\\AEM\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Kabiroman\\AEM\\Tests\\": "tests/"
+        }
+    },
     "config": {
         "sort-packages": true
+    },
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/.github",
+            "/phpunit.xml.dist",
+            "/.gitignore",
+            "/.php-cs-fixer.dist.php",
+            "/phpstan.neon.dist"
+        ]
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:unit": "phpunit -c phpunit.unit.xml",
+        "test:integration": "phpunit --testsuite integration",
+        "test:coverage": "phpunit --coverage-html coverage",
+        "test:unit:coverage": "phpunit -c phpunit.unit.xml --coverage-html coverage/unit"
     }
 }
