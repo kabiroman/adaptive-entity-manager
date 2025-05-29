@@ -3,9 +3,8 @@
     "description": "Adaptive Entity Manager implementing Doctrine ObjectManager for flexible entity management across multiple data sources",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.x-dev",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "version": "1.0.0",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Ruslan Kabirov",
