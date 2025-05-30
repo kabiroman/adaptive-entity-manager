@@ -24,8 +24,9 @@ class UnitOfWorkTest extends TestCase
     {
         self::$em = new AdaptiveEntityManager(
             new Config(
-                __DIR__ . '/../../Mock/Entity',
+                __DIR__.'/../../Mock/Entity',
                 'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../../var/cache'
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider(new MockEntityDataAdapter()),
@@ -62,8 +63,9 @@ class UnitOfWorkTest extends TestCase
     {
         $em = new AdaptiveEntityManager(
             new Config(
-                __DIR__.'/../Entity',
-                'App\\Tests\\Entity\\',
+                __DIR__.'/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../../var/cache'
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider($adapter = $this->createMock(MockEntityDataAdapter::class))
@@ -76,7 +78,7 @@ class UnitOfWorkTest extends TestCase
             'name' => 'test',
             'createdAt' => new DateTime(),
             'price' => 25.65,
-            'nullable' => null
+            'nullable' => null,
         ]);
         $adapter->method('insert')->willReturn([
             'id' => 1,

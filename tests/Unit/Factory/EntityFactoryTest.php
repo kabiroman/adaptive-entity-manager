@@ -2,16 +2,16 @@
 
 namespace Kabiroman\AEM\Tests\Unit\Factory;
 
-use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
-use Kabiroman\AEM\Tests\Mock\Orm\MockClassMetadataProvider;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapterProvider;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityMetadata;
 use DateTime;
 use Exception;
 use Kabiroman\AEM\AdaptiveEntityManager;
 use Kabiroman\AEM\Config;
 use Kabiroman\AEM\EntityFactory;
 use Kabiroman\AEM\EntityProxy\EntityProxyFactory;
+use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
+use Kabiroman\AEM\Tests\Mock\Metadata\MockEntityMetadata;
+use Kabiroman\AEM\Tests\Mock\Orm\MockClassMetadataProvider;
+use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapterProvider;
 use PHPUnit\Framework\TestCase;
 
 class EntityFactoryTest extends TestCase
@@ -23,10 +23,13 @@ class EntityFactoryTest extends TestCase
     public function setUp(): void
     {
         $this->entityFactory = new EntityFactory(
-            $em = new AdaptiveEntityManager(new Config(
-                __DIR__ . '/../../Mock/Entity',
-                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
-            ), new MockClassMetadataProvider(), new MockEntityDataAdapterProvider()),
+            $em = new AdaptiveEntityManager(
+                new Config(
+                    __DIR__.'/../../Mock/Entity',
+                    'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                    __DIR__.'/../../../var/cache'
+                ), new MockClassMetadataProvider(), new MockEntityDataAdapterProvider()
+            ),
             new EntityProxyFactory($em)
         );
         $this->classMetadata = new MockEntityMetadata();

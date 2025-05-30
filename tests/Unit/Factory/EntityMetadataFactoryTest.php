@@ -2,12 +2,13 @@
 
 namespace Kabiroman\AEM\Tests\Unit\Factory;
 
-use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
-use Kabiroman\AEM\Tests\Mock\Orm\MockClassMetadataProvider;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityMetadata;
 use InvalidArgumentException;
 use Kabiroman\AEM\Config;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
+use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
+use Kabiroman\AEM\Tests\Mock\Metadata\IntegerTypeEntityMetadata;
+use Kabiroman\AEM\Tests\Mock\Metadata\MockEntityMetadata;
+use Kabiroman\AEM\Tests\Mock\Orm\MockClassMetadataProvider;
 use PHPUnit\Framework\MockObject\Generator\MockClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -22,10 +23,13 @@ class EntityMetadataFactoryTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->entityMetadataFactory = new EntityMetadataFactory(new Config(
-            __DIR__ . '/../../Mock/Entity',
-            'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
-        ), new MockClassMetadataProvider());
+        $this->entityMetadataFactory = new EntityMetadataFactory(
+            new Config(
+                __DIR__.'/../../Mock/Entity',
+                'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../../var/cache'
+            ), new MockClassMetadataProvider()
+        );
         parent::setUp();
     }
 
@@ -63,6 +67,7 @@ class EntityMetadataFactoryTest extends TestCase
         $result = $this->entityMetadataFactory->getAllMetadata();
         $this->assertIsArray($result);
         $this->assertArrayHasKey(0, $result);
-        $this->assertInstanceOf(MockEntityMetadata::class, $result[0]);
+        $this->assertInstanceOf(IntegerTypeEntityMetadata::class, $result[0]);
+        $this->assertInstanceOf(MockEntityMetadata::class, $result[1]);
     }
 }

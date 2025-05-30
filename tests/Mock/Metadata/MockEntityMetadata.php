@@ -1,10 +1,11 @@
 <?php
 
-namespace Kabiroman\AEM\Tests\Mock\Orm;
+namespace Kabiroman\AEM\Tests\Mock\Metadata;
 
-use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
-use Kabiroman\AEM\Tests\Repository\MockEntityRepository;
 use Kabiroman\AEM\Metadata\AbstractClassMetadata;
+use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
+use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapter;
+use Kabiroman\AEM\Tests\Mock\Repository\MockEntityRepository;
 
 class MockEntityMetadata extends AbstractClassMetadata
 {

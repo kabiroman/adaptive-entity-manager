@@ -21,6 +21,7 @@ class EntityRepositoryTest extends TestCase
             new Config(
                 __DIR__ . '/../../Mock/Entity',
                 'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../../var/cache'
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider(

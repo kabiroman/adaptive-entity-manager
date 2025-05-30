@@ -1,6 +1,6 @@
 <?php
 
-namespace Kabiroman\AEM\Tests\Repository;
+namespace Kabiroman\AEM\Tests\Mock\Repository;
 
 use Kabiroman\AEM\EntityRepository;
 

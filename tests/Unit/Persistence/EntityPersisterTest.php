@@ -24,8 +24,9 @@ class EntityPersisterTest extends TestCase
     {
         self::$em = new AdaptiveEntityManager(
             new Config(
-                __DIR__ . '/../../Mock/Entity',
+                __DIR__.'/../../Mock/Entity',
                 'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../../var/cache'
             ), new MockClassMetadataProvider(), new MockEntityDataAdapterProvider(new MockEntityDataAdapter([
                 1 => [
                     'id' => 1,
@@ -38,7 +39,6 @@ class EntityPersisterTest extends TestCase
             ]))
         );
         self::$em->clear();
-
     }
 
     /**

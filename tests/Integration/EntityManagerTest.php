@@ -3,11 +3,11 @@
 namespace Kabiroman\AEM\Tests\Integration;
 
 use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
+use Kabiroman\AEM\Tests\Mock\Metadata\MockEntityMetadata;
 use Kabiroman\AEM\Tests\Mock\Orm\MockClassMetadataProvider;
 use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapter;
 use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapterProvider;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityMetadata;
-use Kabiroman\AEM\Tests\Repository\MockEntityRepository;
+use Kabiroman\AEM\Tests\Mock\Repository\MockEntityRepository;
 use DateTime;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Kabiroman\AEM\AdaptiveEntityManager;
@@ -41,6 +41,7 @@ class EntityManagerTest extends TestCase
             new Config(
                 __DIR__ . '/../Mock/Entity',
                 'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
+                __DIR__.'/../../var/cache'
             ),
             new MockClassMetadataProvider(),
             new MockEntityDataAdapterProvider(

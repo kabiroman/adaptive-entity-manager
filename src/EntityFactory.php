@@ -4,6 +4,7 @@ namespace Kabiroman\AEM;
 
 use InvalidArgumentException;
 use Kabiroman\AEM\Constant\FetchModeEnum;
+use Kabiroman\AEM\Constant\FieldTypeEnum;
 use Kabiroman\AEM\EntityProxy\EntityProxyFactory;
 use ReflectionProperty;
 
@@ -44,7 +45,7 @@ class EntityFactory
             if (!$typeOfField = $classMetadata->getTypeOfField($fieldName)) {
                 throw new InvalidArgumentException('Type of field "' . $fieldName . '" does not exist.');
             }
-            if (strtolower($propertyType->getName()) !== $typeOfField) {
+            if (strtolower($propertyType->getName()) !== FieldTypeEnum::normalizeType($typeOfField)) {
                 throw new InvalidArgumentException(
                     'Type of property "' . $fieldName . '" does not match type of field "' . $typeOfField . '"'
                 );
@@ -83,7 +84,7 @@ class EntityFactory
             if (!$typeOfField = $classMetadata->getTypeOfField($fieldName)) {
                 throw new InvalidArgumentException('Type of field "' . $fieldName . '" does not exist.');
             }
-            if (strtolower($propertyType->getName()) !== $typeOfField) {
+            if (strtolower($propertyType->getName()) !== FieldTypeEnum::normalizeType($typeOfField)) {
                 throw new InvalidArgumentException(
                     'Type of property "' . $fieldName . '" does not match type of field "' . $typeOfField . '"'
                 );

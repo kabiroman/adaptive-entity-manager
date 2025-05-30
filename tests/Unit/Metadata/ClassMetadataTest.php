@@ -2,11 +2,11 @@
 
 namespace Kabiroman\AEM\Tests\Unit\Metadata;
 
-use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapter;
-use Kabiroman\AEM\Tests\Mock\Orm\MockEntityMetadata;
-use Kabiroman\AEM\Tests\Repository\MockEntityRepository;
 use Kabiroman\AEM\Constant\FieldTypeEnum;
+use Kabiroman\AEM\Tests\Mock\Entity\MockEntity;
+use Kabiroman\AEM\Tests\Mock\Metadata\MockEntityMetadata;
+use Kabiroman\AEM\Tests\Mock\Orm\MockEntityDataAdapter;
+use Kabiroman\AEM\Tests\Mock\Repository\MockEntityRepository;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
