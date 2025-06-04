@@ -2,8 +2,15 @@
 
 namespace Kabiroman\AEM;
 
+use Kabiroman\AEM\Event\PostPersistEvent;
+use Kabiroman\AEM\Event\PostRemoveEvent;
+use Kabiroman\AEM\Event\PostUpdateEvent;
+use Kabiroman\AEM\Event\PrePersistEvent;
+use Kabiroman\AEM\Event\PreRemoveEvent;
+use Kabiroman\AEM\Event\PreUpdateEvent;
 use Kabiroman\AEM\Exception\CommitFailedException;
 use Kabiroman\AEM\Mapping\LifecycleCallbackHandlerTrait;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use SplObjectStorage;
 use Throwable;
 
@@ -16,7 +23,10 @@ class UnitOfWork implements UnitOfWorkInterface
      */
     private static array $persisters = [];
 
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly ?EventDispatcherInterface $eventDispatcher = null
+    )
     {
     }
 
@@ -55,7 +65,9 @@ class UnitOfWork implements UnitOfWorkInterface
                         $callbacks = $this->em->getClassMetadata(get_class($insert))->getLifecycleCallbacks('preFlush');
                         $this->handleLifecycleCallbacks($insert, $callbacks);
                     }
+                    $this->eventDispatcher?->dispatch(new PrePersistEvent($insert));
                     $persister->insert($insert);
+                    $this->eventDispatcher?->dispatch(new PostPersistEvent($insert));
                     $updatedInserts->attach($insert);
                 }
             }
@@ -66,7 +78,9 @@ class UnitOfWork implements UnitOfWorkInterface
                         $this->handleLifecycleCallbacks($update, $callbacks);
                     }
                     if (!$updatedInserts->contains($update)) {
+                        $this->eventDispatcher?->dispatch(new PreUpdateEvent($update));
                         $persister->update($update);
+                        $this->eventDispatcher?->dispatch(new PostUpdateEvent($update));
                     }
                 }
             }
@@ -76,7 +90,9 @@ class UnitOfWork implements UnitOfWorkInterface
                         $callbacks = $this->em->getClassMetadata(get_class($delete))->getLifecycleCallbacks('preFlush');
                         $this->handleLifecycleCallbacks($delete, $callbacks);
                     }
+                    $this->eventDispatcher?->dispatch(new PreRemoveEvent($delete));
                     $persister->delete($delete);
+                    $this->eventDispatcher?->dispatch(new PostRemoveEvent($delete));
                     $persister->detach($delete);
                 }
             }
