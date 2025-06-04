@@ -105,6 +105,58 @@ try {
 
 Create custom adapters for different data sources by implementing the appropriate interfaces in the `DataAdapter` namespace.
 
+### Event System
+
+The Adaptive Entity Manager provides a flexible event system based on PSR-14, allowing you to hook into various stages of the entity lifecycle. This enables powerful extensibility and modularity, letting you execute custom logic before or after core entity operations.
+
+**Key Events:**
+
+- `PrePersistEvent`: Dispatched before an entity is persisted.
+- `PostPersistEvent`: Dispatched after an entity has been persisted.
+- `PreUpdateEvent`: Dispatched before an entity is updated.
+- `PostUpdateEvent`: Dispatched after an entity has been updated.
+- `PreRemoveEvent`: Dispatched before an entity is removed.
+- `PostRemoveEvent`: Dispatched after an entity has been removed.
+
+**Usage Example (Conceptual):**
+
+To listen to events, you would implement a PSR-14 compatible event listener. For example, using a simple event dispatcher (or your framework's own, like Symfony's EventDispatcher):
+
+```php
+use Kabiroman\AEM\Event\PrePersistEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
+
+class MyEventListener
+{
+    public function onPrePersist(PrePersistEvent $event): void
+    {
+        $entity = $event->getEntity();
+        // Perform custom logic before persistence, e.g., set creation date
+        if (method_exists($entity, 'setCreatedAt') && $entity->getCreatedAt() === null) {
+            $entity->setCreatedAt(new \DateTimeImmutable());
+        }
+        // You can stop propagation of the event if needed
+        // $event->stopPropagation();
+    }
+}
+
+// Assuming you have a PSR-14 EventDispatcher instance
+/** @var EventDispatcherInterface $eventDispatcher */
+$eventDispatcher = /* ... your event dispatcher instance ... */;
+
+// In a non-Symfony project, you might need a ListenerProvider:
+// $listenerProvider = new \League\Event\ListenerProvider();
+// $listenerProvider->addListener(PrePersistEvent::class, [new MyEventListener(), 'onPrePersist']);
+// $eventDispatcher = new \League\Event\EventDispatcher($listenerProvider);
+
+// Add your listener to the dispatcher
+// The exact method depends on your PSR-14 implementation
+$eventDispatcher->addListener(PrePersistEvent::class, [new MyEventListener(), 'onPrePersist']);
+
+// When AdaptiveEntityManager (specifically UnitOfWork) dispatches PrePersistEvent,
+// MyEventListener::onPrePersist will be called.
+```
+
 ### Data Adapter Example
 
 The Adaptive Entity Manager allows you to create custom data adapters for different data sources. Here's a simple example of implementing a REST API data adapter for a User entity.

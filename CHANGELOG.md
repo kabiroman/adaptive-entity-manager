@@ -5,6 +5,12 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-06-05
+
+### Added
+- Implemented a universal event system using PSR-14 to allow extensibility and modularity for entity lifecycle events (Pre/Post Persist, Update, Remove).
+- Added `psr/event-dispatcher` as a required dependency.
+
 ## [1.0.8] - 2025-06-05
 
 ### Fixed

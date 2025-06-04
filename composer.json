@@ -3,7 +3,7 @@
     "description": "Adaptive Entity Manager implementing Doctrine ObjectManager for flexible entity management across multiple data sources",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.8",
+    "version": "1.1.0",
     "minimum-stability": "stable",
     "authors": [
         {
