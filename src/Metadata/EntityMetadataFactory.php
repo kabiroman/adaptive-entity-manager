@@ -133,7 +133,7 @@ class EntityMetadataFactory implements ClassMetadataFactory
     private function getResult(): array
     {
         $result = [];
-        $check = $this->config->getEntityNamespace();
+        $check = trim($this->config->getEntityNamespace(), '\\');
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(realpath($this->config->getEntityFolder()))
         );
@@ -143,9 +143,10 @@ class EntityMetadataFactory implements ClassMetadataFactory
             $current = $this->parseTokens(token_get_all(file_get_contents(str_replace('\\', '/', $file))));
             if ($current !== false) {
                 list($namespace, $class) = $current;
+                $namespace = trim($namespace, '\\');
                 if ($namespace === $check) {
-                    if ($classMetadata = $this->classMetadataProvider->getClassMetadata($namespace . $class)) {
-                        $result[$this->hashKey($namespace . $class)] = $classMetadata;
+                    if ($classMetadata = $this->classMetadataProvider->getClassMetadata($namespace . '\\' . $class)) {
+                        $result[$this->hashKey($namespace . '\\' . $class)] = $classMetadata;
                         $associationNames = $classMetadata->getAssociationNames();
 
                         foreach ($associationNames as $associationName) {
