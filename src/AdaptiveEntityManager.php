@@ -10,6 +10,7 @@ use Kabiroman\AEM\DataAdapter\EntityDataAdapterProvider;
 use Kabiroman\AEM\Exception\CommitFailedException;
 use Kabiroman\AEM\Metadata\ClassMetadataProvider;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class AdaptiveEntityManager implements EntityManagerInterface
 {
@@ -30,6 +31,7 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         ClassMetadataFactory $metadataFactory = null,
         RepositoryFactoryInterface $repositoryFactory = null,
         PersisterFactoryInterface $persisterFactory = null,
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         $this->metadataFactory = $metadataFactory ?? new EntityMetadataFactory($config, $classMetadataProvider);
         $this->repositoryFactory = $repositoryFactory ?? new EntityRepositoryFactory();
@@ -37,7 +39,7 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         $this->persisterFactory = $persisterFactory
             ?? new EntityPersisterFactory(new EntityDataAdapterFactory($entityDataAdapterProvider));
 
-        $this->unitOfWork = new UnitOfWork($this);
+        $this->unitOfWork = new UnitOfWork($this, $eventDispatcher);
     }
 
     public function find(string $className, mixed $id): object|null
