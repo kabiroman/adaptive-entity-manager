@@ -12,6 +12,7 @@ use Kabiroman\AEM\Metadata\ClassMetadataProvider;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
 use Kabiroman\AEM\Metadata\MetadataSystemFactory;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class AdaptiveEntityManager implements EntityManagerInterface
 {
@@ -34,12 +35,13 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         PersisterFactoryInterface $persisterFactory = null,
         ?CacheItemPoolInterface $metadataCache = null,
         bool $useOptimizedMetadata = true,
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         if ($metadataFactory === null) {
             if ($useOptimizedMetadata) {
                 $metadataSystem = MetadataSystemFactory::createOptimized(
-                    $config, 
-                    $classMetadataProvider, 
+                    $config,
+                    $classMetadataProvider,
                     $metadataCache
                 );
                 $this->metadataFactory = $metadataSystem['factory'];
@@ -55,7 +57,7 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         $this->persisterFactory = $persisterFactory
             ?? new EntityPersisterFactory(new EntityDataAdapterFactory($entityDataAdapterProvider));
 
-        $this->unitOfWork = new UnitOfWork($this);
+        $this->unitOfWork = new UnitOfWork($this, $eventDispatcher);
     }
 
     public function find(string $className, mixed $id): object|null
