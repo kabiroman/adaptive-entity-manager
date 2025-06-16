@@ -10,6 +10,8 @@ use Kabiroman\AEM\DataAdapter\EntityDataAdapterProvider;
 use Kabiroman\AEM\Exception\CommitFailedException;
 use Kabiroman\AEM\Metadata\ClassMetadataProvider;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
+use Kabiroman\AEM\Metadata\MetadataSystemFactory;
+use Psr\Cache\CacheItemPoolInterface;
 
 final class AdaptiveEntityManager implements EntityManagerInterface
 {
@@ -30,8 +32,24 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         ClassMetadataFactory $metadataFactory = null,
         RepositoryFactoryInterface $repositoryFactory = null,
         PersisterFactoryInterface $persisterFactory = null,
+        ?CacheItemPoolInterface $metadataCache = null,
+        bool $useOptimizedMetadata = true,
     ) {
-        $this->metadataFactory = $metadataFactory ?? new EntityMetadataFactory($config, $classMetadataProvider);
+        if ($metadataFactory === null) {
+            if ($useOptimizedMetadata) {
+                $metadataSystem = MetadataSystemFactory::createOptimized(
+                    $config, 
+                    $classMetadataProvider, 
+                    $metadataCache
+                );
+                $this->metadataFactory = $metadataSystem['factory'];
+            } else {
+                $this->metadataFactory = new EntityMetadataFactory($config, $classMetadataProvider);
+            }
+        } else {
+            $this->metadataFactory = $metadataFactory;
+        }
+
         $this->repositoryFactory = $repositoryFactory ?? new EntityRepositoryFactory();
 
         $this->persisterFactory = $persisterFactory
