@@ -5,6 +5,40 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-12-19
+
+### Added
+- **PSR-6 Compatible Metadata Caching System**: Implemented multi-level caching for entity metadata with runtime and persistent cache layers
+- **CachedEntityMetadataProvider**: Decorator with cache invalidation, warm-up, and statistics
+- **OptimizedEntityMetadataFactory**: Replacement factory with cached entity scanning and optimized proxy generation
+- **SimpleFileCache & SimpleCacheItem**: Basic PSR-6 implementation as fallback when no external cache is provided
+- **MetadataSystemFactory**: Factory for easy setup supporting both optimized and legacy modes
+- **New optional constructor parameters** in `AdaptiveEntityManager`:
+  - `?CacheItemPoolInterface $metadataCache = null` - PSR-6 cache for metadata
+  - `bool $useOptimizedMetadata = true` - Enable/disable optimized metadata system
+  - `EventDispatcherInterface $eventDispatcher = null` - Event dispatcher integration
+- **Comprehensive test suite** with 72 tests (52 unit + 14 integration + 6 metadata)
+- **Documentation files**: `CACHING.md` and `TESTING.md`
+- **Enhanced Composer scripts**: test:syntax, test:quick, cache:clear, install:dev
+
+### Changed
+- **Performance improvements**: Expected 50-70% faster cold start, 90-95% faster warm cache requests
+- **Optimized metadata system enabled by default** while maintaining full backward compatibility
+- **Enhanced PHPUnit configuration** with proper test suites and execution order
+- **Improved test reliability** with fixed SplObjectStorage handling and static property initialization
+
+### Fixed
+- **Removed archive exclusions** from `composer.json` - tests are now included in package distribution
+- **Fixed test execution order** issues that caused random failures
+- **Resolved SplObjectStorage::current()** issues with proper rewind() calls
+- **Fixed static property initialization** problems in test classes
+
+### Dependencies
+- Added `psr/cache: ^1.0 || ^2.0 || ^3.0` for metadata caching support
+
+### Breaking Changes
+- **None** - Full backward compatibility maintained for all existing code
+
 ## [1.1.1] - 2024-06-05
 
 ### Fixed

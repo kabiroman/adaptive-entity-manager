@@ -1,0 +1,22 @@
+# Dependencies
+/vendor/
+
+# Cache and temporary files
+/var/
+/coverage/
+
+# Composer lock file (for libraries)
+composer.lock
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHPUnit cache
+.phpunit.result.cache 

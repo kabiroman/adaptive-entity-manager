@@ -18,7 +18,7 @@ class EntityPersisterTest extends TestCase
 {
     private static AdaptiveEntityManager $em;
     private static int $entity_object_id;
-    private static MockEntity $entity;
+    private static ?MockEntity $entity = null;
 
     public static function setUpBeforeClass(): void
     {
@@ -27,7 +27,9 @@ class EntityPersisterTest extends TestCase
                 __DIR__.'/../../Mock/Entity',
                 'Kabiroman\\AEM\\Tests\\Mock\\Entity\\',
                 __DIR__.'/../../../var/cache'
-            ), new MockClassMetadataProvider(), new MockEntityDataAdapterProvider(new MockEntityDataAdapter([
+            ), 
+            new MockClassMetadataProvider(), 
+            new MockEntityDataAdapterProvider(new MockEntityDataAdapter([
                 1 => [
                     'id' => 1,
                     'active' => true,
@@ -36,9 +38,15 @@ class EntityPersisterTest extends TestCase
                     'price' => 987.65,
                     'nullable' => null,
                 ],
-            ]))
+            ])),
+            null, // transactionalConnection
+            null, // metadataFactory
+            null, // repositoryFactory
+            null, // persisterFactory
+            null, // metadataCache
+            false // useOptimizedMetadata - отключаем для старых тестов
         );
-        self::$em->clear();
+        // Не очищаем $em->clear() чтобы persisters сохранялись между тестами
     }
 
     /**
@@ -77,7 +85,9 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $reflection = new ReflectionClass($persister);
         $inserts = $reflection->getProperty('inserts')->getValue($persister);
+        $inserts->rewind();
         $entity = $inserts->current();
+        $this->assertNotFalse($entity, 'Entity should exist in inserts');
         $this->assertTrue($persister->exists($entity));
     }
 
@@ -89,7 +99,9 @@ class EntityPersisterTest extends TestCase
 
         $this->assertCount(1, $inserts);
         $this->assertInstanceOf(SplObjectStorage::class, $inserts);
-        $this->assertInstanceOf(MockEntity::class, $entity = $inserts->current());
+        $inserts->rewind();
+        $entity = $inserts->current();
+        $this->assertInstanceOf(MockEntity::class, $entity);
         $this->assertEquals(self::$entity_object_id, spl_object_id($entity));
     }
 
@@ -100,6 +112,7 @@ class EntityPersisterTest extends TestCase
     {
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $inserts = $persister->getInserts();
+        $inserts->rewind();
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $entity = $inserts->current();
 
@@ -115,7 +128,9 @@ class EntityPersisterTest extends TestCase
         $this->assertCount(1, $updates);
         $this->assertCount(0, $deletes);
         $this->assertContains($entity, $updates);
-        $this->assertInstanceOf(MockEntity::class, $entity = $updates->current());
+        $updates->rewind();
+        $entity = $updates->current();
+        $this->assertInstanceOf(MockEntity::class, $entity);
         $this->assertEquals(self::$entity_object_id, spl_object_id($entity));
     }
 
@@ -127,7 +142,9 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $reflection = new ReflectionClass($persister);
         $updates = $reflection->getProperty('updates')->getValue($persister);
+        $updates->rewind();
         $entity = $updates->current();
+        $this->assertNotFalse($entity, 'Entity should exist in updates');
         $this->assertTrue($persister->exists($entity));
     }
 
@@ -136,8 +153,10 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $updates = $persister->getUpdates();
         $this->assertCount(1, $updates);
+        $updates->rewind();
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-        $this->assertInstanceOf(MockEntity::class, $entity = $updates->current());
+        $entity = $updates->current();
+        $this->assertInstanceOf(MockEntity::class, $entity);
         $this->assertEquals(self::$entity_object_id, spl_object_id($entity));
     }
 
@@ -145,6 +164,7 @@ class EntityPersisterTest extends TestCase
     {
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $updates = $persister->getUpdates();
+        $updates->rewind();
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $entity = $updates->current();
         $entityTemp = clone $entity;
@@ -166,6 +186,7 @@ class EntityPersisterTest extends TestCase
     {
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $updates = $persister->getUpdates();
+        $updates->rewind();
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $entity = $updates->current();
         $entityTempBefore = clone $entity;
@@ -198,6 +219,7 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $reflection = new ReflectionClass($persister);
         $updates = $reflection->getProperty('updates')->getValue($persister);
+        $updates->rewind();
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $entity = $updates->current();
 
@@ -218,7 +240,9 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $reflection = new ReflectionClass($persister);
         $deletes = $reflection->getProperty('deletes')->getValue($persister);
+        $deletes->rewind();
         $entity = $deletes->current();
+        $this->assertNotFalse($entity, 'Entity should exist in deletes');
         $this->assertTrue($persister->exists($entity));
     }
 
@@ -229,7 +253,9 @@ class EntityPersisterTest extends TestCase
 
         $this->assertCount(1, $deletes);
         $this->assertInstanceOf(SplObjectStorage::class, $deletes);
-        $this->assertInstanceOf(MockEntity::class, $entity = $deletes->current());
+        $deletes->rewind();
+        $entity = $deletes->current();
+        $this->assertInstanceOf(MockEntity::class, $entity);
         $this->assertEquals(self::$entity_object_id, spl_object_id($entity));
     }
 
@@ -241,6 +267,7 @@ class EntityPersisterTest extends TestCase
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $reflection = new ReflectionClass($persister);
         $deletes = $reflection->getProperty('deletes')->getValue($persister);
+        $deletes->rewind();
         $entity = $deletes->current();
 
         $persister->delete($entity);
@@ -257,12 +284,14 @@ class EntityPersisterTest extends TestCase
 
     public function testExistsAfterDelete(): void
     {
+        $this->assertNotNull(self::$entity, 'Entity should be set by previous test');
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $this->assertFalse($persister->exists(self::$entity));
     }
 
     public function testDetach(): void
     {
+        $this->assertNotNull(self::$entity, 'Entity should be set by previous test');
         $persister = self::$em->getUnitOfWork()->getEntityPersister(self::$em->getClassMetadata(MockEntity::class));
         $persister->addInsert(self::$entity);
         $persister->detach(self::$entity);
