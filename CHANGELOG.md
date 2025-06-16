@@ -5,6 +5,18 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2025-01-17
+
+### Fixed
+- **DateTimeInterface Type Support**: Added support for `DateTimeInterface` typed properties in entities
+- **Enhanced Type Comparison**: Fixed EntityFactory type comparison logic to properly normalize both property and field types
+- **PHP 8.1+ Compatibility**: Resolved compatibility issue with modern PHP typed properties using `DateTimeInterface`
+
+### Technical Details
+- Extended `FieldTypeEnum::normalizeType()` to recognize `'datetimeinterface'` as equivalent to `'datetime'`
+- Modified EntityFactory comparison logic to normalize both sides: `FieldTypeEnum::normalizeType(strtolower($propertyType->getName())) !== FieldTypeEnum::normalizeType($typeOfField)`
+- This allows entities to declare properties as `private ?DateTimeInterface $dateRegister` while using `'datetime'` type in metadata
+
 ## [1.2.0] - 2025-06-16
 
 ### Added
