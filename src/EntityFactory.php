@@ -45,7 +45,7 @@ class EntityFactory
             if (!$typeOfField = $classMetadata->getTypeOfField($fieldName)) {
                 throw new InvalidArgumentException('Type of field "' . $fieldName . '" does not exist.');
             }
-            if (strtolower($propertyType->getName()) !== FieldTypeEnum::normalizeType($typeOfField)) {
+            if (FieldTypeEnum::normalizeType(strtolower($propertyType->getName())) !== FieldTypeEnum::normalizeType($typeOfField)) {
                 throw new InvalidArgumentException(
                     'Type of property "' . $fieldName . '" does not match type of field "' . $typeOfField . '"'
                 );
@@ -84,7 +84,7 @@ class EntityFactory
             if (!$typeOfField = $classMetadata->getTypeOfField($fieldName)) {
                 throw new InvalidArgumentException('Type of field "' . $fieldName . '" does not exist.');
             }
-            if (strtolower($propertyType->getName()) !== FieldTypeEnum::normalizeType($typeOfField)) {
+            if (FieldTypeEnum::normalizeType(strtolower($propertyType->getName())) !== FieldTypeEnum::normalizeType($typeOfField)) {
                 throw new InvalidArgumentException(
                     'Type of property "' . $fieldName . '" does not match type of field "' . $typeOfField . '"'
                 );

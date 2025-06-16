@@ -16,7 +16,7 @@ enum FieldTypeEnum: string
             'integer', 'int' => self::Integer->value,
             'string' => self::String->value,
             'bool', 'boolean' => self::Boolean->value,
-            'datetime' => self::DateTime->value,
+            'datetime', 'datetimeinterface' => self::DateTime->value,
             'float' => self::Float->value,
             default => $type,
         };
