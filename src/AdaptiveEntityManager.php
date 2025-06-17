@@ -11,6 +11,7 @@ use Kabiroman\AEM\Exception\CommitFailedException;
 use Kabiroman\AEM\Metadata\ClassMetadataProvider;
 use Kabiroman\AEM\Metadata\EntityMetadataFactory;
 use Kabiroman\AEM\Metadata\MetadataSystemFactory;
+use Kabiroman\AEM\ValueObject\Converter\ValueObjectConverterRegistry;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -25,6 +26,8 @@ final class AdaptiveEntityManager implements EntityManagerInterface
 
     private readonly PersisterFactoryInterface $persisterFactory;
 
+    private readonly ?ValueObjectConverterRegistry $valueObjectRegistry;
+
     public function __construct(
         private readonly Config $config,
         ClassMetadataProvider $classMetadataProvider,
@@ -35,7 +38,8 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         PersisterFactoryInterface $persisterFactory = null,
         ?CacheItemPoolInterface $metadataCache = null,
         bool $useOptimizedMetadata = true,
-        EventDispatcherInterface $eventDispatcher = null
+        EventDispatcherInterface $eventDispatcher = null,
+        ?ValueObjectConverterRegistry $valueObjectRegistry = null
     ) {
         if ($metadataFactory === null) {
             if ($useOptimizedMetadata) {
@@ -53,6 +57,8 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         }
 
         $this->repositoryFactory = $repositoryFactory ?? new EntityRepositoryFactory();
+
+        $this->valueObjectRegistry = $valueObjectRegistry;
 
         $this->persisterFactory = $persisterFactory
             ?? new EntityPersisterFactory(new EntityDataAdapterFactory($entityDataAdapterProvider));
@@ -174,5 +180,18 @@ final class AdaptiveEntityManager implements EntityManagerInterface
     public function getConfig(): Config
     {
         return $this->config;
+    }
+
+    public function getValueObjectRegistry(): ?ValueObjectConverterRegistry
+    {
+        return $this->valueObjectRegistry;
+    }
+
+    /**
+     * Check if ValueObject support is enabled.
+     */
+    public function hasValueObjectSupport(): bool
+    {
+        return $this->valueObjectRegistry !== null;
     }
 }

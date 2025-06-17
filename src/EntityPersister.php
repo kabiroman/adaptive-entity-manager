@@ -35,7 +35,16 @@ class EntityPersister implements PersisterInterface
         $this->deletes = new SplObjectStorage();
 
         if (!isset(self::$entityFactory)) {
-            self::$entityFactory = new EntityFactory($this->entityManager, new EntityProxyFactory($entityManager));
+            // Create ValueObject-aware factory if ValueObject support is enabled
+            if ($this->entityManager->hasValueObjectSupport()) {
+                self::$entityFactory = new ValueObjectAwareEntityFactory(
+                    $this->entityManager,
+                    new EntityProxyFactory($entityManager),
+                    $this->entityManager->getValueObjectRegistry()
+                );
+            } else {
+                self::$entityFactory = new EntityFactory($this->entityManager, new EntityProxyFactory($entityManager));
+            }
         }
     }
 
