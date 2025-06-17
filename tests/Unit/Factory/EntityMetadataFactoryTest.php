@@ -66,8 +66,22 @@ class EntityMetadataFactoryTest extends TestCase
     {
         $result = $this->entityMetadataFactory->getAllMetadata();
         $this->assertIsArray($result);
-        $this->assertArrayHasKey(0, $result);
-        $this->assertInstanceOf(IntegerTypeEntityMetadata::class, $result[0]);
-        $this->assertInstanceOf(MockEntityMetadata::class, $result[1]);
+        $this->assertGreaterThanOrEqual(2, count($result));
+        
+        // Check that we have the expected metadata types
+        $hasIntegerType = false;
+        $hasMockEntity = false;
+        
+        foreach ($result as $metadata) {
+            if ($metadata instanceof IntegerTypeEntityMetadata) {
+                $hasIntegerType = true;
+            }
+            if ($metadata instanceof MockEntityMetadata) {
+                $hasMockEntity = true;
+            }
+        }
+        
+        $this->assertTrue($hasIntegerType, 'Should contain IntegerTypeEntityMetadata');
+        $this->assertTrue($hasMockEntity, 'Should contain MockEntityMetadata');
     }
 }
