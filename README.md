@@ -11,11 +11,26 @@ Adaptive Entity Manager (AEM) is a powerful entity management system that provid
 - Pluggable data source adapters
 - Unified entity management interface
 - Support for multiple data sources simultaneously
+- **Value Objects support**: Built-in support for immutable Value Objects with automatic conversion
 - Transaction management
 - Lazy loading through proxy objects
 - Flexible entity repository system
 - Comprehensive metadata management
 - Efficient unit of work implementation
+
+## Recent Updates (v1.3.1)
+
+### 🔧 Enhanced Type Support
+- **DateTime Immutable**: Added full support for `datetime_immutable` field types
+- **Automatic Conversion**: String-to-DateTime conversion for all DateTime types
+- **Flexible Identifiers**: Improved identifier handling in data adapters
+- **Type Safety**: Enhanced validation for DateTime properties
+
+### 🚀 Improvements
+- Better compatibility with modern PHP DateTime types
+- More robust identifier resolution (`['id' => 1]`, `[1]`, `['ID' => 1]`)
+- Enhanced error handling for type mismatches
+- 100% backward compatibility maintained
 
 ## Requirements
 
@@ -100,6 +115,98 @@ try {
 ```
 
 ## Advanced Features
+
+### ValueObject Support
+
+Adaptive Entity Manager provides built-in support for immutable Value Objects, allowing you to work with domain-specific types instead of primitive values.
+
+#### Built-in ValueObjects
+
+- **Email**: Email validation with domain/local part extraction
+- **Money**: Currency-aware monetary values with arithmetic operations  
+- **UserId**: Type-safe user identifiers with validation
+
+#### Basic Usage
+
+```php
+use Kabiroman\AEM\ValueObject\Common\Email;
+use Kabiroman\AEM\ValueObject\Common\Money;
+use Kabiroman\AEM\ValueObject\Converter\ValueObjectConverterRegistry;
+
+// Enable ValueObject support
+$registry = new ValueObjectConverterRegistry();
+$entityManager = new AdaptiveEntityManager(
+    $config,
+    $metadataProvider,
+    $dataAdapterProvider,
+    valueObjectRegistry: $registry
+);
+
+// Using Email ValueObject
+$user = new User();
+$user->setEmail(new Email('user@example.com'));
+
+// Automatic conversion during persistence
+$entityManager->persist($user);  // Email converts to string
+$entityManager->flush();
+
+// Automatic conversion during hydration
+$loadedUser = $entityManager->find(User::class, 1);
+$email = $loadedUser->getEmail();  // Returns Email ValueObject
+echo $email->getDomain();  // "example.com"
+```
+
+#### Entity Configuration
+
+Configure your entity metadata to use ValueObjects:
+
+```php
+// In your entity metadata class
+use Kabiroman\AEM\Constant\FieldTypeEnum;
+use Kabiroman\AEM\ValueObject\Common\Email;
+
+$metadata->addField('email', FieldTypeEnum::ValueObject, Email::class);
+```
+
+#### Custom ValueObjects
+
+Create your own ValueObjects by implementing `ValueObjectInterface`:
+
+```php
+use Kabiroman\AEM\ValueObject\ValueObjectInterface;
+
+class ProductCode implements ValueObjectInterface
+{
+    public function __construct(private readonly string $code)
+    {
+        if (!preg_match('/^[A-Z]{2}\d{4}$/', $code)) {
+            throw new \InvalidArgumentException('Invalid product code format');
+        }
+    }
+
+    public function toPrimitive(): string
+    {
+        return $this->code;
+    }
+
+    public static function fromPrimitive($value): self
+    {
+        return new self((string) $value);
+    }
+
+    public function equals(ValueObjectInterface $other): bool
+    {
+        return $other instanceof self && $this->code === $other->code;
+    }
+
+    public function __toString(): string
+    {
+        return $this->code;
+    }
+}
+```
+
+For complete ValueObject documentation, see [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md).
 
 ### Custom Data Adapters
 
@@ -461,6 +568,52 @@ class User
 ### Entity Proxies
 
 The system supports lazy loading through proxy objects, automatically generating proxy classes when needed.
+
+### Value Objects
+
+The Adaptive Entity Manager provides powerful Value Object support for better domain modeling and type safety. Value Objects are immutable objects that are defined by their values rather than identity.
+
+```php
+use Kabiroman\AEM\ValueObject\Common\Email;
+use Kabiroman\AEM\ValueObject\Common\Money;
+use Kabiroman\AEM\ValueObject\Converter\ValueObjectConverterRegistry;
+
+// Enable Value Object support
+$valueObjectRegistry = new ValueObjectConverterRegistry();
+$entityManager = new AdaptiveEntityManager(
+    config: $config,
+    classMetadataProvider: $metadataProvider,
+    entityDataAdapterProvider: $adapterProvider,
+    valueObjectRegistry: $valueObjectRegistry
+);
+
+// Use Value Objects in entities
+class Product
+{
+    private Email $contactEmail;
+    private Money $price;
+    
+    public function setContactEmail(Email $email): void
+    {
+        $this->contactEmail = $email;
+    }
+    
+    public function setPrice(Money $price): void
+    {
+        $this->price = $price;
+    }
+}
+
+// Create and use Value Objects
+$product = new Product();
+$product->setContactEmail(Email::fromPrimitive('contact@example.com'));
+$product->setPrice(Money::fromPrimitive(['amount' => 12500, 'currency' => 'USD']));
+
+$entityManager->persist($product);
+$entityManager->flush();
+```
+
+For detailed documentation on Value Objects, see [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md).
 
 ## Contributing
 

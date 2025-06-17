@@ -5,6 +5,130 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-06-18
+
+### Fixed
+- **DateTime Immutable Support**: Added support for `datetime_immutable` field type in `FieldTypeEnum::normalizeType()`
+- **Enhanced DateTime Conversion**: Implemented automatic string-to-DateTime conversion in `ValueObjectAwareEntityFactory`
+- **Flexible Identifier Handling**: Improved `loadById()` method to handle various identifier formats (`['id' => 1]`, `[1]`, `['ID' => 1]`)
+- **Type Safety**: Enhanced type validation and conversion for DateTime types (`DateTime`, `DateTimeImmutable`, `DateTimeInterface`)
+
+### Technical Details
+- Extended `FieldTypeEnum::normalizeType()` to map `'datetime_immutable'` and `'datetimeimmutable'` to `DateTime` type
+- Added `convertStandardType()` method in `ValueObjectAwareEntityFactory` for automatic DateTime conversion
+- Improved identifier resolution in data adapters to support multiple identifier key formats
+- Enhanced type compatibility checking between entity properties and field metadata
+
+### Compatibility
+- **100% Backward Compatible**: All existing code continues to work without changes
+- **Enhanced Type Support**: Better handling of modern PHP DateTime types
+- **Improved Robustness**: More flexible identifier and type handling
+
+## [1.3.0] - 2024-06-18
+
+### Added
+
+#### 🎉 ValueObject Support
+- **Complete ValueObject system** with `ValueObjectInterface` and `AbstractValueObject` base class
+- **Built-in ValueObjects**:
+  - `Email` - Email validation with domain/local part extraction
+  - `Money` - Currency-aware monetary values with arithmetic operations
+  - `UserId` - Type-safe user identifiers with validation
+- **Converter System**:
+  - `ValueObjectConverterInterface` for custom conversions
+  - `DefaultValueObjectConverter` with automatic primitive conversion
+  - `ValueObjectConverterRegistry` for managing multiple converters
+- **Framework Integration**:
+  - Extended `FieldTypeEnum` with `ValueObject` type
+  - `ValueObjectAwareEntityFactory` for automatic conversion during hydration
+  - Enhanced `AdaptiveEntityManager` with optional `ValueObjectConverterRegistry`
+  - Updated `EntityPersister` with ValueObject-aware persistence
+
+#### 🔧 Core Enhancements
+- **New Field Type**: Added `FieldTypeEnum::ValueObject` for ValueObject fields
+- **Enhanced Entity Factory**: ValueObject-aware entity creation and hydration
+- **Improved Entity Manager**: Optional ValueObject support with registry parameter
+- **Automatic Conversion**: Seamless primitive ↔ ValueObject conversion during persistence
+
+#### 📚 Documentation & Examples
+- **Complete Documentation**: `docs/VALUE_OBJECTS.md` with usage examples
+- **Demo Script**: `examples/value_objects_demo.php` showcasing all features
+- **Integration Tests**: Comprehensive test suite with 80+ tests
+- **Updated README**: ValueObject examples and usage patterns
+
+### Enhanced
+
+#### 🚀 Performance & Reliability
+- **Runtime Caching**: Optimized ValueObject conversion with caching
+- **Type Safety**: Full PHP type checking for ValueObjects
+- **Validation**: Built-in validation for all ValueObject types
+- **Immutability**: ValueObjects are immutable by design
+
+#### 🔄 Backward Compatibility
+- **100% Backward Compatible**: Existing code works without changes
+- **Optional Feature**: ValueObject support is opt-in
+- **Graceful Degradation**: Works with or without ValueObject registry
+
+### Technical Details
+
+#### Architecture
+- **Registry Pattern**: Centralized ValueObject converter management
+- **Factory Pattern**: Enhanced entity factories with ValueObject support
+- **Strategy Pattern**: Pluggable converter system for custom ValueObjects
+
+#### Database Integration
+- **Transparent Persistence**: ValueObjects serialize to primitives automatically
+- **Schema Compatibility**: No database schema changes required
+- **Type Mapping**: Automatic type conversion during hydration/persistence
+
+#### Testing
+- **Comprehensive Coverage**: 80+ tests covering all ValueObject functionality
+- **Integration Tests**: Real-world usage scenarios
+- **Validation Tests**: Error handling and edge cases
+- **Performance Tests**: Conversion efficiency verification
+
+### Examples
+
+```php
+// Using built-in Email ValueObject
+$user = new User();
+$user->setEmail(new Email('user@example.com'));
+
+// Automatic conversion during persistence
+$entityManager->persist($user);  // Email converts to string
+$entityManager->flush();
+
+// Automatic conversion during hydration
+$loadedUser = $entityManager->find(User::class, 1);
+$email = $loadedUser->getEmail();  // Returns Email ValueObject
+echo $email->getDomain();  // "example.com"
+```
+
+### Migration Guide
+
+For existing projects wanting to use ValueObjects:
+
+1. **Add ValueObject Registry** to Entity Manager:
+```php
+$registry = new ValueObjectConverterRegistry();
+$entityManager = new AdaptiveEntityManager($config, $metadata, $dataAdapter, valueObjectRegistry: $registry);
+```
+
+2. **Update Entity Metadata** to specify ValueObject fields:
+```php
+$metadata->addField('email', FieldTypeEnum::ValueObject, Email::class);
+```
+
+3. **Update Entity Properties** to use ValueObject types:
+```php
+private ?Email $email = null;
+```
+
+### Dependencies
+- No new required dependencies
+- Enhanced PSR-6 cache support for metadata caching
+- Compatible with existing Doctrine persistence interfaces
+
 ## [1.2.1] - 2025-01-17
 
 ### Fixed
