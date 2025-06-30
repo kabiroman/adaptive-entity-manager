@@ -5,6 +5,24 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2025-06-30
+
+### Changed
+- **Entity Instantiation**: Modified `EntityFactory::makeEntity()` to use `ReflectionClass::newInstanceWithoutConstructor()` instead of calling entity constructors directly
+- **Doctrine-like Behavior**: EntityFactory now creates entities without invoking constructors during hydration, matching Doctrine ORM behavior
+- **Constructor Safety**: Prevents potential issues with entities that have constructors requiring parameters or containing business logic
+
+### Technical Details
+- Replaced `new ($classMetadata->getName())()` with `$reflectionClass->newInstanceWithoutConstructor()` in `EntityFactory::makeEntity()`
+- This change ensures entity constructors are not called during database hydration process
+- Maintains compatibility with existing code while providing safer entity instantiation
+- `ValueObjectAwareEntityFactory` inherits this improvement automatically
+
+### Benefits
+- **Safer hydration**: No unexpected constructor execution during entity creation from database
+- **Better compatibility**: Aligns with Doctrine ORM's entity instantiation approach
+- **Reduced errors**: Prevents constructor-related errors during entity hydration
+
 ## [1.3.1] - 2025-06-18
 
 ### Fixed

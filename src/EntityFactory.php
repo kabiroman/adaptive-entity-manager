@@ -18,7 +18,10 @@ class EntityFactory
 
     public function makeEntity(ClassMetadata $classMetadata, array $row): object
     {
-        $this->setIdentifierValue($entity = new ($classMetadata->getName())(), $classMetadata, $row);
+        $reflectionClass = $classMetadata->getReflectionClass();
+        $entity = $reflectionClass->newInstanceWithoutConstructor();
+        
+        $this->setIdentifierValue($entity, $classMetadata, $row);
 
         return $entity;
     }

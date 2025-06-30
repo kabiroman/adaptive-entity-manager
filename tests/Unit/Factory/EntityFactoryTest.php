@@ -79,4 +79,6 @@ class EntityFactoryTest extends TestCase
         $result = $this->entityFactory->getEntityDataRow($entity, $this->classMetadata);
         $this->assertEquals($row, $result);
     }
+
+
 }
