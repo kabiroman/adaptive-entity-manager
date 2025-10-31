@@ -18,19 +18,16 @@ Adaptive Entity Manager (AEM) is a powerful entity management system that provid
 - Comprehensive metadata management
 - Efficient unit of work implementation
 
-## Recent Updates (v1.3.1)
+## Recent Updates (v1.4.0)
 
-### 🔧 Enhanced Type Support
-- **DateTime Immutable**: Added full support for `datetime_immutable` field types
-- **Automatic Conversion**: String-to-DateTime conversion for all DateTime types
-- **Flexible Identifiers**: Improved identifier handling in data adapters
-- **Type Safety**: Enhanced validation for DateTime properties
-
-### 🚀 Improvements
-- Better compatibility with modern PHP DateTime types
-- More robust identifier resolution (`['id' => 1]`, `[1]`, `['ID' => 1]`)
-- Enhanced error handling for type mismatches
-- 100% backward compatibility maintained
+### Boolean Value Mapping and Criteria Support
+- Introduced `values` option for boolean fields to map non-standard source flags (Y/N, 0/1, T/F) to PHP bool
+- Bidirectional conversion:
+  - Inbound (row → object) during hydration
+  - Outbound (object → row) during persistence
+  - Criteria: boolean criteria values (including arrays) are mapped before adapter queries
+- Metadata API extended with `ClassMetadata::getFieldOption()` for accessing field options
+- Backward compatible: if `values` is not configured, behavior is unchanged
 
 ## Requirements
 
