@@ -527,6 +527,29 @@ This metadata configuration provides:
 - Type safety through explicit type definitions
 - Flexible data adapter integration
 
+### Boolean value mapping
+If your data source uses flags like `Y|N`, `0|1`, or `T|F`, you can normalize them to PHP `bool` using the `values` option on a field with `type => 'boolean'` in your metadata:
+
+```php
+'fields' => [
+    'isActive' => [
+        'type' => 'boolean',
+        'column' => 'ACTIVE',
+        'nullable' => false,
+        'values' => [
+            'Y' => true,
+            'N' => false,
+        ],
+    ],
+]
+```
+
+Notes:
+- Keys in `values` are matched case-insensitively for strings; exact match takes precedence.
+- If `values` is not specified, the source value is used as-is (no implicit Y/N handling).
+- Repository criteria on boolean fields also honor `values` when querying: passing `['isActive' => true]` will be converted to the corresponding source value (e.g., `'Y'`). Arrays in criteria (e.g., `['isActive' => [true, false]]`) are mapped element-wise.
+- During persistence (object → row), boolean properties are converted to the configured source representation using `values` (e.g., `true` → `'Y'`).
+
 User entity class that this metadata would describe:
 
 ```php

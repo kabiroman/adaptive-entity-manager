@@ -59,6 +59,7 @@ class ValueObjectAwareEntityFactory extends EntityFactory
                 $value = $this->convertToValueObject($value, $propertyType->getName(), $fieldName);
             } else {
                 // Convert standard types
+                $value = $this->applyBooleanMapIfNeeded($classMetadata, $fieldName, $typeOfField, $value);
                 $value = $this->convertStandardType($value, $propertyType, $typeOfField, $fieldName);
             }
 
@@ -113,6 +114,7 @@ class ValueObjectAwareEntityFactory extends EntityFactory
                 $value = $this->convertToValueObject($value, $propertyType->getName(), $fieldName);
             } elseif (!$setNull) {
                 // Convert standard types
+                $value = $this->applyBooleanMapIfNeeded($classMetadata, $fieldName, $typeOfField, $value);
                 $value = $this->convertStandardType($value, $propertyType, $typeOfField, $fieldName);
             }
 
@@ -176,6 +178,12 @@ class ValueObjectAwareEntityFactory extends EntityFactory
                 // Convert ValueObject to database value
                 if ($value instanceof ValueObjectInterface) {
                     $value = $this->valueObjectRegistry->convertToDatabase($value);
+                }
+
+                // Map boolean PHP value to source representation if configured
+                $typeOfField = $classMetadata->getTypeOfField($fieldName) ?? '';
+                if (FieldTypeEnum::normalizeType($typeOfField) === FieldTypeEnum::Boolean->value) {
+                    $value = $this->mapBooleanValueToSource($classMetadata, $fieldName, $value);
                 }
 
                 $row[$classMetadata->getColumnOfField($fieldName)] = $value;
@@ -284,6 +292,62 @@ class ValueObjectAwareEntityFactory extends EntityFactory
         }
 
         return $value;
+    }
+
+    private function applyBooleanMapIfNeeded(ClassMetadata $classMetadata, string $fieldName, string $typeOfField, mixed $value): mixed
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (FieldTypeEnum::normalizeType($typeOfField) !== FieldTypeEnum::Boolean->value) {
+            return $value;
+        }
+
+        // Read mapping from 'values' key only
+        $map = $classMetadata->getFieldOption($fieldName, 'values');
+        if (!is_array($map) || $map === []) {
+            return $value;
+        }
+
+        $key = is_string($value) ? $value : (is_int($value) || is_float($value) ? (string)$value : $value);
+        if (!is_string($key)) {
+            return $value;
+        }
+
+        // exact match first
+        if (array_key_exists($key, $map)) {
+            return (bool)$map[$key];
+        }
+        // case-insensitive fallback for string keys
+        foreach ($map as $k => $v) {
+            if (is_string($k) && strcasecmp($k, $key) === 0) {
+                return (bool)$v;
+            }
+        }
+
+        return $value;
+    }
+
+    private function mapBooleanValueToSource(ClassMetadata $classMetadata, string $fieldName, mixed $value): mixed
+    {
+        if (!is_bool($value)) {
+            return $value;
+        }
+        $map = $classMetadata->getFieldOption($fieldName, 'values');
+        if (!is_array($map) || $map === []) {
+            return $value;
+        }
+        $mapTrue = null;
+        $mapFalse = null;
+        foreach ($map as $k => $v) {
+            if ((bool)$v === true && $mapTrue === null) {
+                $mapTrue = $k;
+            }
+            if ((bool)$v === false && $mapFalse === null) {
+                $mapFalse = $k;
+            }
+        }
+        return $value ? ($mapTrue ?? $value) : ($mapFalse ?? $value);
     }
 
     /**

@@ -231,4 +231,14 @@ abstract class AbstractClassMetadata implements ClassMetadata
     {
         return $this->metadata[$this->getName()]['lifecycleCallbacks'][$event];
     }
+
+    public function getFieldOption(string $fieldName, string $optionKey): mixed
+    {
+        $params = array_merge($this->getIdentifierParams(), $this->getFieldsParams());
+        if (!isset($params[$fieldName])) {
+            return null;
+        }
+
+        return $params[$fieldName][$optionKey] ?? null;
+    }
 }

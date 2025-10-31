@@ -5,6 +5,38 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-10-31
+
+### Added
+
+#### Boolean Value Mapping
+- **Bidirectional mapping** for boolean fields with non-standard source representations (e.g., `Y|N`, `0|1`, `T|F`)
+- **`values` option** in metadata/YAML configuration to map source values to PHP boolean
+- **Automatic conversion** in both directions:
+  - **Inbound (row → object)**: Source values (e.g., `'Y'`, `'N'`) automatically convert to PHP `bool` during hydration
+  - **Outbound (object → row)**: PHP boolean values convert back to configured source representation during persistence
+  - **Criteria mapping**: Boolean criteria values in repository queries are mapped to source values before adapter calls
+- **Case-insensitive matching**: String keys in `values` are matched case-insensitively with exact match taking precedence
+- **Metadata extension**: Added `getFieldOption()` method to `ClassMetadata` interface and `AbstractClassMetadata` for accessing arbitrary field options
+
+### Technical Details
+- Added `getFieldOption(string $fieldName, string $optionKey): mixed` to `ClassMetadata` interface
+- Implemented `getFieldOption()` in `AbstractClassMetadata` to access field metadata options
+- Added `applyBooleanMapIfNeeded()` method in `ValueObjectAwareEntityFactory` for inbound value mapping
+- Added `mapBooleanValueToSource()` method in `ValueObjectAwareEntityFactory` for outbound value mapping
+- Added `mapCriteriaBooleanValue()` method in `EntityPersister` for criteria value conversion
+- Integrated boolean mapping into `fillEntity()`, `setIdentifierValue()`, and `getEntityDataRow()` methods
+
+### Benefits
+- **Flexible data sources**: Works seamlessly with legacy databases using non-standard boolean representations
+- **Type safety**: Maintains PHP boolean type in entities while supporting various source formats
+- **Transparent conversion**: Automatic bidirectional mapping without manual conversion code
+- **Query support**: Criteria queries automatically use source values, ensuring correct filtering
+
+### Compatibility
+- **100% Backward Compatible**: If `values` is not specified, behavior remains unchanged
+- **No breaking changes**: All existing code continues to work without modifications
+
 ## [1.3.2] - 2025-06-30
 
 ### Changed

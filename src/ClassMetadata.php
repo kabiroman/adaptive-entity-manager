@@ -33,4 +33,10 @@ interface ClassMetadata extends \Doctrine\Persistence\Mapping\ClassMetadata
     public function hasLifecycleCallbacks(string $event): bool;
 
     public function getLifecycleCallbacks(string $event): array;
+
+    /**
+     * Returns an arbitrary field option from metadata, if present.
+     * For example: getFieldOption('active', 'boolean_map')
+     */
+    public function getFieldOption(string $fieldName, string $optionKey): mixed;
 }

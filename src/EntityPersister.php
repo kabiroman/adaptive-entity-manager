@@ -303,6 +303,13 @@ class EntityPersister implements PersisterInterface
     {
         foreach ($criteria as $key => $value) {
             $fieldName = preg_replace('/^[=%><@!]{0,3}/', '', $key);
+
+            // Map boolean criteria values using 'values' config (reverse mapping)
+            $typeOfField = $this->classMetadata->getTypeOfField($fieldName);
+            if ($typeOfField && \Kabiroman\AEM\Constant\FieldTypeEnum::normalizeType($typeOfField) === \Kabiroman\AEM\Constant\FieldTypeEnum::Boolean->value) {
+                $criteria[$key] = $this->mapCriteriaBooleanValue($fieldName, $criteria[$key]);
+            }
+
             $new_key = preg_replace('/'.$fieldName.'/', $this->classMetadata->getColumnOfField($fieldName), $key);
             $this->changeKey($key, $new_key, $criteria);
         }
@@ -335,5 +342,37 @@ class EntityPersister implements PersisterInterface
             $arr[$new_key] = $arr[$key];
             unset($arr[$key]);
         }
+    }
+
+    private function mapCriteriaBooleanValue(string $fieldName, mixed $value): mixed
+    {
+        $map = $this->classMetadata->getFieldOption($fieldName, 'values');
+        if (!is_array($map) || $map === []) {
+            return $value;
+        }
+
+        $mapTrue = null;
+        $mapFalse = null;
+        foreach ($map as $k => $v) {
+            if ((bool)$v === true && $mapTrue === null) {
+                $mapTrue = $k;
+            }
+            if ((bool)$v === false && $mapFalse === null) {
+                $mapFalse = $k;
+            }
+        }
+
+        $convert = function ($val) use ($mapTrue, $mapFalse) {
+            if (is_bool($val)) {
+                return $val ? ($mapTrue ?? $val) : ($mapFalse ?? $val);
+            }
+            return $val;
+        };
+
+        if (is_array($value)) {
+            return array_map($convert, $value);
+        }
+
+        return $convert($value);
     }
 }
