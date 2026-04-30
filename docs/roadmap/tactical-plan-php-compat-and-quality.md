@@ -22,6 +22,7 @@ refactoring effort.
 - Verify PHP 8.1-8.4 compatibility.
 - Remove known PHP 8.4 deprecation risks.
 - Add automated test execution in CI.
+- Add targeted test coverage for the riskiest runtime flows.
 - Introduce a basic static analysis gate.
 - Keep Composer scripts useful for local development and CI.
 - Add minimal documentation updates for supported PHP versions and quality
@@ -54,6 +55,24 @@ Files that should be checked first:
 - `src/AdaptiveEntityManager.php`
 - `src/PersistentCollection.php`
 - `src/Exception/CommitFailedException.php`
+
+## Execution Order After Documentation Translation
+
+After the main documentation translation pass, the next work should focus on
+runtime confidence before larger test expansion or architectural changes.
+
+Recommended order:
+
+1. Prepare the codebase for PHP 8.4.
+2. Add the PHP version CI matrix.
+3. Improve test coverage in targeted high-risk areas.
+4. Add static analysis.
+5. Update public documentation to reflect the new quality gates.
+
+The reason for this order is practical: PHP 8.4 readiness is a small,
+low-risk change, while CI gives immediate feedback for all later work. Coverage
+improvements are more valuable once they run automatically across supported PHP
+versions.
 
 ## Work Plan
 
@@ -155,7 +174,35 @@ Acceptance criteria:
 - Local commands are documented or obvious from `composer.json`.
 - No unnecessary script churn.
 
-### 4. Static Analysis Baseline
+### 4. Targeted Test Coverage
+
+Improve coverage for the runtime paths that are most likely to regress during
+future architecture work.
+
+Do not optimize for a coverage percentage first. The initial goal is to cover
+behavior that defines the package contract.
+
+Recommended priority:
+
+- `EntityPersister`: insert, update, delete, refresh, identity map behavior, and
+  dirty checking.
+- `UnitOfWork`: commit order, transaction boundaries, rollback behavior, and
+  lifecycle events.
+- Metadata factories: field mapping, association mapping, lifecycle callbacks,
+  and cache behavior.
+- Value Object conversion: current `ValueObjectInterface` behavior and
+  compatibility expectations before the new converter layer.
+- Proxy and `PersistentCollection` behavior: lazy loading, initialization, and
+  repeated access.
+
+Acceptance criteria:
+
+- New tests focus on observable behavior rather than implementation details.
+- The most important persistence flows are covered by unit or integration tests.
+- Tests are stable enough to run in the PHP version matrix.
+- No large refactoring is introduced only to make tests easier.
+
+### 5. Static Analysis Baseline
 
 Introduce PHPStan as the first static analysis tool.
 
@@ -185,7 +232,7 @@ Acceptance criteria:
 - CI runs static analysis.
 - The starting level is documented and intentionally chosen.
 
-### 5. Minimal Documentation Update
+### 6. Minimal Documentation Update
 
 Update public documentation after CI and PHP compatibility are confirmed.
 
@@ -211,6 +258,7 @@ Suggested branch split:
 ```text
 compat/php-84-readiness
 ci/phpunit-matrix
+test/targeted-runtime-coverage
 qa/phpstan-baseline
 docs/php-compat-quality-gates
 ```
@@ -229,6 +277,7 @@ should be completed through small branches that can be merged quickly.
 ```text
 fix: make nullable parameters explicit for PHP 8.4
 ci: run PHPUnit across supported PHP versions
+test: cover critical persistence flows
 qa: add PHPStan baseline
 docs: document PHP compatibility quality gates
 ```
@@ -240,6 +289,8 @@ This tactical cycle is complete when:
 - Tests pass locally on the current development PHP version.
 - CI passes on PHP 8.1, 8.2, 8.3, and 8.4.
 - Known PHP 8.4 nullable parameter deprecations are removed.
+- Critical persistence, UnitOfWork, metadata, Value Object, and proxy flows have
+  targeted test coverage.
 - PHPStan runs in CI at the agreed starting level.
 - README or roadmap documentation reflects the supported PHP versions.
 - No domain model, VO mapping, or aggregate mapping redesign is mixed into this
