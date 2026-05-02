@@ -5,6 +5,19 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-02
+
+### Added
+- Add CI matrix for PHP 8.1, 8.2, 8.3, and 8.4.
+- Add CI status badge to README.
+- Add PHPStan (level 5) with PHPUnit extension, baseline quality gate, and `composer analyse` / `composer check` scripts.
+- Add targeted tests: flush rollback on insert failure, commit event dispatch order, preFlush lifecycle, flush path with default optimized metadata, `loadAll` criteria (field-to-column and boolean source values), `PersistentCollection` lazy init, EntityManager proxy initialization helpers.
+- Add English documentation roadmap/RFC updates.
+
+### Changed
+- Make nullable parameters explicit for PHP 8.4 readiness.
+- Refresh documentation positioning around DBAL, legacy databases, and hexagonal architecture.
+
 ## [1.4.0] - 2025-10-31
 
 ### Added
