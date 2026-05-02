@@ -38,7 +38,7 @@ In **hexagonal** (ports and adapters) architectures, place AEM in the infrastruc
 ## Requirements
 
 - PHP 8.1 or higher ([Composer platform requirement](composer.json))
-- CI tests this package on **PHP 8.1, 8.2, 8.3, and 8.4** (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+- CI tests this package on **PHP 8.1, 8.2, 8.3, and 8.4** (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)), including **PHPStan** at level 5 (`composer analyse`) on each matrix version
 - Composer for dependency management
 
 ## Installation

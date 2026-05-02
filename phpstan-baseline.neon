@@ -1,0 +1,253 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Kabiroman\\AEM\\AdaptiveEntityManager\:\:getRepository\(\) should return Kabiroman\\AEM\\EntityRepository but returns Doctrine\\Persistence\\ObjectRepository\<T of object\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/AdaptiveEntityManager.php
+
+		-
+			message: '#^Return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Kabiroman\\AEM\\ClassMetadata\<object\>\>\) of method Kabiroman\\AEM\\AdaptiveEntityManager\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: src/AdaptiveEntityManager.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/EntityFactory.php
+
+		-
+			message: '#^PHPDoc tag @return contains generic type Kabiroman\\AEM\\ClassMetadata\<object\> but interface Kabiroman\\AEM\\ClassMetadata is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 2
+			path: src/EntityManagerInterface.php
+
+		-
+			message: '#^Return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Kabiroman\\AEM\\ClassMetadata\<object\>\>\) of method Kabiroman\\AEM\\EntityManagerInterface\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: src/EntityManagerInterface.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:getValueObjectRegistry\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/EntityPersister.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:hasValueObjectSupport\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/EntityPersister.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:getConfig\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/EntityProxy/EntityProxyFactory.php
+
+		-
+			message: '#^Call to method __setCallback\(\) on an unknown class Kabiroman\\AEM\\EntityProxy\\EntityProxyTrait\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/EntityProxy/EntityProxyFactory.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$proxy has invalid type Kabiroman\\AEM\\EntityProxy\\EntityProxyTrait\.$#'
+			identifier: varTag.trait
+			count: 1
+			path: src/EntityProxy/EntityProxyFactory.php
+
+		-
+			message: '#^Trait Kabiroman\\AEM\\EntityProxy\\EntityProxyTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/EntityProxy/EntityProxyTrait.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$class contains generic type Kabiroman\\AEM\\ClassMetadata\<object\> but interface Kabiroman\\AEM\\ClassMetadata is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: src/EntityRepository.php
+
+		-
+			message: '#^PHPDoc type for property Kabiroman\\AEM\\EntityRepository\:\:\$class contains generic type Kabiroman\\AEM\\ClassMetadata\<object\> but interface Kabiroman\\AEM\\ClassMetadata is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: src/EntityRepository.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Metadata/AbstractClassMetadata.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Metadata/EntityMetadataFactory.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Metadata/EntityMetadataFactory.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Metadata/OptimizedEntityMetadataFactory.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/ValueObjectAwareEntityFactory.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:isBuiltin\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/ValueObjectAwareEntityFactory.php
+
+		-
+			message: '#^Property Kabiroman\\AEM\\ValueObjectAwareEntityFactory\:\:\$entityProxyFactory is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/ValueObjectAwareEntityFactory.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Metadata\\EntityMetadataFactory\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Tests\\Mock\\Orm\\MockEntityDataAdapter\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Tests\\Mock\\Orm\\MockEntityDataAdapter\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\TransactionalConnection\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Doctrine\\\\Persistence\\\\Mapping\\\\ClassMetadataFactory'' and Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Kabiroman\\AEM\\ClassMetadata\<object\>\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\ClassMetadata'' and Kabiroman\\AEM\\ClassMetadata\<Kabiroman\\AEM\\Tests\\Mock\\Entity\\MockEntity\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\PersisterFactoryInterface'' and Kabiroman\\AEM\\PersisterFactoryInterface will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\UnitOfWork'' and Kabiroman\\AEM\\UnitOfWork will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/EntityManagerTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\Tests\\\\Mock\\\\Entity\\\\ValueObjectEntity'' and Kabiroman\\AEM\\Tests\\Mock\\Entity\\ValueObjectEntity will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/ValueObjectTest.php
+
+		-
+			message: '#^Property Kabiroman\\AEM\\Tests\\Integration\\ValueObjectTest\:\:\$entityManager is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Integration/ValueObjectTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Metadata\\ClassMetadataProvider\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/Metadata/CachedEntityMetadataProviderTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''DateTime'' and DateTime will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Factory/EntityFactoryTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with list\<Doctrine\\Persistence\\Mapping\\ClassMetadata\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Factory/EntityMetadataFactoryTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''ReflectionClass'' and ReflectionClass\<covariant object\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Metadata/ClassMetadataTest.php
+
+		-
+			message: '#^Cannot call method current\(\) on array\<mixed\>\|Traversable\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Unit/Persistence/EntityPersisterTest.php
+
+		-
+			message: '#^Cannot call method current\(\) on iterable\<object\>\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: tests/Unit/Persistence/EntityPersisterTest.php
+
+		-
+			message: '#^Cannot call method rewind\(\) on array\<mixed\>\|Traversable\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Unit/Persistence/EntityPersisterTest.php
+
+		-
+			message: '#^Cannot call method rewind\(\) on iterable\<object\>\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: tests/Unit/Persistence/EntityPersisterTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\PersisterInterface'' and Kabiroman\\AEM\\PersisterInterface will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Persistence/UnitOfWorkTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Kabiroman\\\\AEM\\\\UnitOfWork'' and Kabiroman\\AEM\\UnitOfWork will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Persistence/UnitOfWorkTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Tests\\Mock\\Orm\\MockEntityDataAdapter\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Unit/Repository/EntityRepositoryTest.php
+
+		-
+			message: '#^Call to an undefined method Kabiroman\\AEM\\Tests\\Mock\\Orm\\MockEntityDataAdapter\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Repository/EntityRepositoryTest.php

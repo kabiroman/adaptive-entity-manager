@@ -231,6 +231,11 @@ Acceptance criteria:
 - A Composer script exists for static analysis.
 - CI runs static analysis.
 - The starting level is documented and intentionally chosen.
+- If a baseline is used for legacy findings, policy is recorded in `phpstan.neon` (or this roadmap), not in user-facing README; the baseline should shrink over time.
+
+Implementation note:
+
+- `phpstan/phpstan-phpunit` helps PHPUnit mocks in `tests/`. `tests/bootstrap.php` is excluded from analysis (optional Dotenv there is not a Composer dependency).
 
 ### 6. Minimal Documentation Update
 
