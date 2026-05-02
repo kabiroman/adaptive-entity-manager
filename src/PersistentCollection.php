@@ -8,13 +8,13 @@ use Iterator;
 
 class PersistentCollection extends ArrayObject
 {
-    private Closure $callback;
+    private ?Closure $callback = null;
 
     private bool $__initialized = false;
 
-    public function __construct(Closure $callback = null)
+    public function __construct(?Closure $callback = null)
     {
-        if ($callback) {
+        if ($callback !== null) {
             $this->callback = $callback;
         }
         parent::__construct();
@@ -23,7 +23,7 @@ class PersistentCollection extends ArrayObject
     public function initialize(): void
     {
         $this->__initialized = true;
-        if (isset($this->callback)) {
+        if ($this->callback !== null) {
             $callback = $this->callback;
             parent::__construct($callback());
         }

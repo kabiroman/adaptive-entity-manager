@@ -33,12 +33,12 @@ final class AdaptiveEntityManager implements EntityManagerInterface
         ClassMetadataProvider $classMetadataProvider,
         EntityDataAdapterProvider $entityDataAdapterProvider,
         private readonly ?TransactionalConnection $transactionalConnection = null,
-        ClassMetadataFactory $metadataFactory = null,
-        RepositoryFactoryInterface $repositoryFactory = null,
-        PersisterFactoryInterface $persisterFactory = null,
+        ?ClassMetadataFactory $metadataFactory = null,
+        ?RepositoryFactoryInterface $repositoryFactory = null,
+        ?PersisterFactoryInterface $persisterFactory = null,
         ?CacheItemPoolInterface $metadataCache = null,
         bool $useOptimizedMetadata = true,
-        EventDispatcherInterface $eventDispatcher = null,
+        ?EventDispatcherInterface $eventDispatcher = null,
         ?ValueObjectConverterRegistry $valueObjectRegistry = null
     ) {
         if ($metadataFactory === null) {

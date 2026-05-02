@@ -11,7 +11,7 @@ class MockEntityDataAdapterProvider implements EntityDataAdapterProvider
 {
     private EntityDataAdapter $adapter;
 
-    public function __construct(EntityDataAdapter $adapter = null)
+    public function __construct(?EntityDataAdapter $adapter = null)
     {
         $this->adapter = $adapter ?? new MockEntityDataAdapter();
     }
