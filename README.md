@@ -1,5 +1,7 @@
 # Adaptive Entity Manager
 
+[![CI](https://github.com/kabiroman/adaptive-entity-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/kabiroman/adaptive-entity-manager/actions/workflows/ci.yml)
+
 A flexible PHP package implementing the Doctrine ObjectManager interface for seamlessly managing entities across different data sources: SQL databases, REST APIs, GraphQL endpoints, etc., using pluggable adapters.
 
 ## Overview
