@@ -103,12 +103,12 @@ $balance = $user->getBalance(); // Money Value Object
 
 #### AEM strengths here
 
-- **Fast attach** to a legacy database in days, not months
+- **Fast integration** with a legacy database in days, not months
 - **Incremental rollout** — one bounded context at a time
 - **Low blast radius** — old paths can keep running in parallel
 - **Richer data model** via Value Objects
 
-#### Watch outs
+#### Things to watch
 
 - Temptation to rewrite everything immediately
 - Creative legacy schemas that fight elegant mapping
@@ -153,25 +153,37 @@ $documents = $documentsRepository->findByUser($userId); // filesystem or object 
 #### Adapter sketches
 
 ```php
-// Legacy DB adapter
+// Legacy DB adapter (sketch — implement EntityDataAdapter methods)
 class LegacyDatabaseAdapter extends AbstractDataAdapter {
-    public function fetchData($criteria) {
-        return $this->legacyConnection->query($sql);
+    public function loadById(array $identifier): ?array {
+        return $this->legacyConnection->query(/* build SQL from $identifier */);
     }
+
+    public function loadAll(array $criteria = [], ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array {
+        return $this->legacyConnection->queryAll(/* ... */);
+    }
+
+    public function insert(array $row): array { /* ... */ }
+    public function update(array $identifier, array $row): void { /* ... */ }
+    public function delete(array $identifier): void { /* ... */ }
+    public function refresh(array $identifier): array { /* ... */ }
 }
 
 // REST API adapter
 class RestApiAdapter extends AbstractDataAdapter {
-    public function fetchData($criteria) {
-        return $this->httpClient->get('/api/users/' . $criteria['id']);
+    public function loadById(array $identifier): ?array {
+        return $this->httpClient->get('/api/users/' . $identifier['id']);
     }
+    // insert, update, delete, refresh, loadAll ...
 }
 
-// Filesystem adapter
+// Filesystem-backed adapter
 class FileSystemAdapter extends AbstractDataAdapter {
-    public function fetchData($criteria) {
-        return json_decode(file_get_contents($this->dataPath . '/' . $criteria['id'] . '.json'));
+    public function loadById(array $identifier): ?array {
+        $path = $this->dataPath . '/' . $identifier['id'] . '.json';
+        return file_exists($path) ? json_decode(file_get_contents($path), true) : null;
     }
+    // insert, update, delete, refresh, loadAll ...
 }
 ```
 
@@ -199,10 +211,10 @@ class FileSystemAdapter extends AbstractDataAdapter {
 #### End state example
 
 ```php
-// Instead of many bespoke adapters:
-$user = $userApiAdapter->fetchUser($id);
-$profile = $profileDbAdapter->fetchProfile($id);
-$orders = $orderFileAdapter->fetchOrders($id);
+// Instead of many unrelated integration entry points:
+$user = $userIntegration->getById($id);
+$profile = $profileIntegration->findForUser($id);
+$orders = $ordersIntegration->listForUser($id);
 
 // You converge on Doctrine semantics:
 $user = $userRepository->find($id);

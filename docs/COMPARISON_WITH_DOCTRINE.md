@@ -65,7 +65,7 @@ graph TD
 - **DQL:** object-oriented query language
 - **Stability:** large ecosystem and long-term support
 
-## Difference analysis
+## Key differences
 
 ### Architectural differences
 
@@ -169,7 +169,7 @@ $doctrineEntityManager = EntityManager::create($connection, $config);
 - **Multiple data sources** must coexist
 - **You need speed** without weeks of ORM setup
 - **Storage flexibility** matters (DB + API + files)
-- **Value Objects** should land in brownfield code
+- **Value Objects** can be introduced into brownfield code
 
 ### Choose Doctrine ORM when
 

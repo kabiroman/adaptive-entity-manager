@@ -118,7 +118,7 @@ sequenceDiagram
     alt cache hit
         Cache-->>EP: cached entities
     else cache miss
-        EP->>DA: fetchData(criteria)
+        EP->>DA: loadAll(criteria)
         DA->>DB: execute query
         DB-->>DA: raw data
         DA-->>EP: structured data

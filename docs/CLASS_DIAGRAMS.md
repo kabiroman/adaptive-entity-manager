@@ -52,17 +52,19 @@ classDiagram
     }
     
     class Config {
-        -array settings
-        +get(key) mixed
-        +set(key, value) void
-        +has(key) bool
+        +string entityFolder
+        +string entityNamespace
+        +string cacheFolder
+        +getEntityFolder() string
+        +getEntityNamespace() string
+        +getCacheFolder() string
     }
-    
+
     class ConfigInterface {
         <<interface>>
-        +get(key) mixed
-        +set(key, value) void
-        +has(key) bool
+        +getEntityFolder() string
+        +getEntityNamespace() string
+        +getCacheFolder() string
     }
     
     AdaptiveEntityManager ..|> EntityManagerInterface
@@ -146,10 +148,12 @@ classDiagram
 classDiagram
     class EntityDataAdapter {
         <<interface>>
-        +fetchData(criteria) array
-        +saveData(data) bool
-        +updateData(data, criteria) bool
-        +deleteData(criteria) bool
+        +insert(row) array
+        +update(identifier, row) void
+        +delete(identifier) void
+        +refresh(identifier) array
+        +loadById(identifier) array|null
+        +loadAll(criteria, orderBy, limit, offset) array
     }
     
     class AbstractDataAdapter {
@@ -161,25 +165,23 @@ classDiagram
     }
     
     class EntityDataAdapterProvider {
-        +getAdapter(className) EntityDataAdapter
-        +hasAdapter(className) bool
+        <<interface>>
+        +getAdapter(metadata) EntityDataAdapter
     }
-    
+
     class DefaultEntityDataAdapterProvider {
-        -array adapters
-        +getAdapter(className) EntityDataAdapter
-        +hasAdapter(className) bool
-        +addAdapter(className, adapter) void
+        -ContainerInterface container
+        +getAdapter(metadata) EntityDataAdapter
     }
-    
+
     class EntityDataAdapterFactory {
         -EntityDataAdapterProvider provider
-        +createAdapter(className) EntityDataAdapter
+        +getAdapter(metadata) EntityDataAdapter
     }
-    
+
     class DataAdapterFactoryInterface {
         <<interface>>
-        +createAdapter(className) EntityDataAdapter
+        +getAdapter(metadata) EntityDataAdapter
     }
     
     AbstractDataAdapter ..|> EntityDataAdapter

@@ -88,7 +88,7 @@ sequenceDiagram
     Client->>AEM: find(className, id)
     AEM->>UOW: getEntityPersister(metadata)
     UOW->>EP: loadById(identifier)
-    EP->>DA: fetchData(criteria)
+    EP->>DA: loadById(identifier)
     DA-->>EP: rawData
     EP-->>AEM: entity
     AEM-->>Client: entity
@@ -101,7 +101,7 @@ sequenceDiagram
     AEM->>UOW: commit()
     UOW->>ED: dispatch(PrePersistEvent)
     UOW->>EP: insert(entity)
-    EP->>DA: saveData(entity)
+    EP->>DA: insert(row)
     UOW->>ED: dispatch(PostPersistEvent)
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: project-maturity-roadmap
-overview: "Grow Adaptive Entity Manager from an early public library into a more mature OSS package: stabler API, stronger documentation, CI, static analysis, examples, and cleaner DDD-oriented design."
+overview: "Grow Adaptive Entity Manager from an early public library into a more mature OSS package: more stable API, stronger documentation, CI, static analysis, examples, and cleaner DDD-oriented design."
 todos:
   - id: docs-positioning
     content: Refresh positioning, README, and English-first documentation.
@@ -35,11 +35,11 @@ The project already has solid foundations: Composer packaging, a public namespac
 
 Key entry points:
 
-- [composer.json](composer.json) — package metadata, dependencies, and Composer scripts.
-- [src/AdaptiveEntityManager.php](src/AdaptiveEntityManager.php) — primary public API.
-- [src/UnitOfWork.php](src/UnitOfWork.php) — commit and transaction lifecycle.
-- [src/EntityPersister.php](src/EntityPersister.php) — persistence flow and dirty tracking.
-- [docs/rfc/domain-agnostic-value-object-mapping.md](docs/rfc/domain-agnostic-value-object-mapping.md) — direction for domain-clean Value Object mapping.
+- [composer.json](../../composer.json) — package metadata, dependencies, and Composer scripts.
+- [src/AdaptiveEntityManager.php](../../src/AdaptiveEntityManager.php) — primary public API.
+- [src/UnitOfWork.php](../../src/UnitOfWork.php) — commit and transaction lifecycle.
+- [src/EntityPersister.php](../../src/EntityPersister.php) — persistence flow and dirty tracking.
+- [domain-agnostic-value-object-mapping.md](../rfc/domain-agnostic-value-object-mapping.md) — direction for domain-clean Value Object mapping.
 
 ## Phase 1: Packaging and trust
 
@@ -86,7 +86,7 @@ The largest architectural step toward DDD-friendly usage.
 - Keep `ValueObjectInterface` for backward compatibility.
 - Support converters via metadata options such as `class`, `converter`, `from`, `to`, `format`.
 - Ship built-in handling for `Stringable`, `BackedEnum`, `JsonSerializable`, `DateTimeInterface`.
-- Update [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md) with examples of clean domain VOs.
+- Update [VALUE_OBJECTS.md](../VALUE_OBJECTS.md) with examples of clean domain VOs.
 
 **Outcome:** domain code is not forced to implement `Kabiroman\AEM\ValueObject\ValueObjectInterface`.
 
