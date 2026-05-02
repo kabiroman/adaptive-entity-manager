@@ -1,6 +1,6 @@
-# Диаграммы классов
+# Class diagrams
 
-Этот документ содержит UML диаграммы классов Adaptive Entity Manager, показывающие структуру и взаимосвязи основных компонентов.
+UML-style class diagrams for Adaptive Entity Manager: structure and relationships between major components.
 
 ## 1. Core Entity Manager Classes
 
@@ -477,14 +477,14 @@ classDiagram
     Exception <|-- CommitFailedException
 ```
 
-## Заключение
+## Summary
 
-Эти диаграммы классов показывают:
+These class diagrams highlight:
 
-- **Четкое разделение ответственности** между различными слоями архитектуры
-- **Использование интерфейсов** для обеспечения гибкости и тестируемости
-- **Паттерны проектирования**: Factory, Repository, Unit of Work, Value Object
-- **Расширяемость** через абстрактные классы и интерфейсы
-- **Инверсию зависимостей** для слабой связанности компонентов
+- **Clear separation of concerns** across architectural layers
+- **Interface-driven design** for flexibility and testability
+- **Patterns:** Factory, Repository, Unit of Work, Value Object
+- **Extensibility** through abstract types and contracts
+- **Dependency inversion** to keep components loosely coupled
 
-Архитектура следует принципам SOLID и обеспечивает высокую модульность и возможность тестирования. 
+The layout follows SOLID ideas and supports modular, testable composition.

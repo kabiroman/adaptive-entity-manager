@@ -1,8 +1,8 @@
-# Диаграммы взаимодействий и процессов
+# Interaction and process diagrams
 
-Этот документ содержит детальные диаграммы взаимодействий компонентов Adaptive Entity Manager.
+Detailed interaction diagrams for Adaptive Entity Manager components.
 
-## 1. Процесс инициализации Entity Manager
+## 1. Entity Manager initialization
 
 ```mermaid
 sequenceDiagram
@@ -15,11 +15,11 @@ sequenceDiagram
     participant PF as PersisterFactory
     participant UOW as UnitOfWork
     participant Cache
-    
+
     Client->>AEM: new AdaptiveEntityManager(config, ...)
     AEM->>Config: validate configuration
     Config-->>AEM: validated config
-    
+
     alt useOptimizedMetadata
         AEM->>MSF: createOptimized(config, provider, cache)
         MSF->>CMF: create optimized factory
@@ -28,44 +28,44 @@ sequenceDiagram
         AEM->>CMF: new EntityMetadataFactory(config, provider)
         CMF-->>AEM: metadata factory
     end
-    
+
     AEM->>RF: create repository factory
     RF-->>AEM: repository factory
-    
+
     AEM->>PF: create persister factory
     PF-->>AEM: persister factory
-    
+
     AEM->>UOW: new UnitOfWork(this, eventDispatcher)
     UOW-->>AEM: unit of work
-    
+
     AEM-->>Client: initialized EntityManager
 ```
 
-## 2. Жизненный цикл сущности
+## 2. Entity lifecycle
 
 ```mermaid
 graph TB
-    subgraph "Entity Lifecycle"
+    subgraph entityLifecycle [Entity lifecycle]
         New["`**New**
-        Не известна EM
-        Не имеет ID`"]
-        
+        Unknown to EM
+        No ID`"]
+
         Managed["`**Managed**
-        Отслеживается EM
-        Имеет ID
-        Синхронизирована с БД`"]
-        
+        Tracked by EM
+        Has ID
+        In sync with data source`"]
+
         Detached["`**Detached**
-        Не отслеживается EM
-        Может иметь ID
-        Не синхронизирована с БД`"]
-        
+        Not tracked by EM
+        May have ID
+        Out of sync with data source`"]
+
         Removed["`**Removed**
-        Отмечена для удаления
-        Будет удалена при flush()`"]
+        Marked for deletion
+        Will be removed on flush()`"]
     end
-    
-    subgraph "Operations"
+
+    subgraph operations [Operations]
         persist["`persist()`"]
         find["`find()`"]
         merge["`merge()`"]
@@ -74,7 +74,7 @@ graph TB
         flush["`flush()`"]
         clear["`clear()`"]
     end
-    
+
     New -->|persist| Managed
     New -->|merge| Managed
     Detached -->|find| Managed
@@ -84,14 +84,9 @@ graph TB
     Managed -->|clear| Detached
     Removed -->|flush| Detached
     Removed -->|detach| Detached
-    
-    style New fill:#ffebee
-    style Managed fill:#e8f5e8
-    style Detached fill:#fff3e0
-    style Removed fill:#fce4ec
 ```
 
-## 3. Процесс выполнения запроса
+## 3. Query execution flow
 
 ```mermaid
 sequenceDiagram
@@ -103,26 +98,26 @@ sequenceDiagram
     participant DA as DataAdapter
     participant Cache
     participant DB as Database
-    
+
     Client->>AEM: getRepository(className)
     AEM->>Repo: create/get repository
     Repo-->>Client: repository instance
-    
+
     Client->>Repo: findBy(criteria)
     Repo->>AEM: getClassMetadata(className)
     AEM-->>Repo: metadata
-    
+
     Repo->>UOW: getEntityPersister(metadata)
     UOW->>EP: get/create persister
     EP-->>UOW: persister instance
     UOW-->>Repo: persister
-    
+
     Repo->>EP: findBy(criteria)
-    
+
     EP->>Cache: get cached results
-    alt Cache Hit
+    alt cache hit
         Cache-->>EP: cached entities
-    else Cache Miss
+    else cache miss
         EP->>DA: fetchData(criteria)
         DA->>DB: execute query
         DB-->>DA: raw data
@@ -130,91 +125,86 @@ sequenceDiagram
         EP->>EP: hydrate entities
         EP->>Cache: store results
     end
-    
+
     EP-->>Repo: entity collection
     Repo-->>Client: results
 ```
 
-## 4. Процесс коммита (flush)
+## 4. Commit (flush) flow
 
 ```mermaid
 flowchart TB
     Start(["`flush() called`"])
-    
-    subgraph "Transaction Management"
-        BeginTx["`Begin Transaction`"]
-        CommitTx["`Commit Transaction`"]
-        RollbackTx["`Rollback Transaction`"]
+
+    subgraph transactionMgmt [Transaction management]
+        BeginTx["`Begin transaction`"]
+        CommitTx["`Commit transaction`"]
+        RollbackTx["`Rollback transaction`"]
     end
-    
-    subgraph "Pre-Processing"
-        PreFlush["`Execute preFlush callbacks`"]
-        CollectChanges["`Collect all changes from persisters`"]
+
+    subgraph preProcessing [Pre-processing]
+        PreFlush["`Run preFlush callbacks`"]
+        CollectChanges["`Collect changes from persisters`"]
     end
-    
-    subgraph "Insert Phase"
-        ProcessInserts["`Process Inserts`"]
+
+    subgraph insertPhase [Insert phase]
+        ProcessInserts["`Process inserts`"]
         PrePersistEvent["`Dispatch PrePersistEvent`"]
-        ExecuteInsert["`Execute Insert`"]
+        ExecuteInsert["`Execute insert`"]
         PostPersistEvent["`Dispatch PostPersistEvent`"]
     end
-    
-    subgraph "Update Phase"
-        ProcessUpdates["`Process Updates`"]
+
+    subgraph updatePhase [Update phase]
+        ProcessUpdates["`Process updates`"]
         PreUpdateEvent["`Dispatch PreUpdateEvent`"]
-        ExecuteUpdate["`Execute Update`"]
+        ExecuteUpdate["`Execute update`"]
         PostUpdateEvent["`Dispatch PostUpdateEvent`"]
     end
-    
-    subgraph "Delete Phase"
-        ProcessDeletes["`Process Deletes`"]
+
+    subgraph deletePhase [Delete phase]
+        ProcessDeletes["`Process deletes`"]
         PreRemoveEvent["`Dispatch PreRemoveEvent`"]
-        ExecuteDelete["`Execute Delete`"]
+        ExecuteDelete["`Execute delete`"]
         PostRemoveEvent["`Dispatch PostRemoveEvent`"]
-        DetachEntity["`Detach Entity`"]
+        DetachEntity["`Detach entity`"]
     end
-    
-    Error["`Error Occurred`"]
+
+    Error["`Error`"]
     Success["`Success`"]
     End(["`End`"])
-    
+
     Start --> BeginTx
     BeginTx --> PreFlush
     PreFlush --> CollectChanges
     CollectChanges --> ProcessInserts
-    
+
     ProcessInserts --> PrePersistEvent
     PrePersistEvent --> ExecuteInsert
     ExecuteInsert --> PostPersistEvent
     PostPersistEvent --> ProcessUpdates
-    
+
     ProcessUpdates --> PreUpdateEvent
     PreUpdateEvent --> ExecuteUpdate
     ExecuteUpdate --> PostUpdateEvent
     PostUpdateEvent --> ProcessDeletes
-    
+
     ProcessDeletes --> PreRemoveEvent
     PreRemoveEvent --> ExecuteDelete
     ExecuteDelete --> PostRemoveEvent
     PostRemoveEvent --> DetachEntity
     DetachEntity --> CommitTx
-    
+
     CommitTx --> Success
     Success --> End
-    
-    ExecuteInsert -->|Error| Error
-    ExecuteUpdate -->|Error| Error
-    ExecuteDelete -->|Error| Error
+
+    ExecuteInsert -->|error| Error
+    ExecuteUpdate -->|error| Error
+    ExecuteDelete -->|error| Error
     Error --> RollbackTx
     RollbackTx --> End
-    
-    style Start fill:#e8f5e8
-    style Success fill:#c8e6c9
-    style Error fill:#ffcdd2
-    style End fill:#f5f5f5
 ```
 
-## 5. Value Object Conversion Flow
+## 5. Value Object conversion flow
 
 ```mermaid
 sequenceDiagram
@@ -225,179 +215,169 @@ sequenceDiagram
     participant VOC as ValueObjectConverter
     participant VO as ValueObject
     participant DA as DataAdapter
-    
-    Note over Entity,DA: Entity Creation from Raw Data
-    
+
+    Note over Entity,DA: Hydration from raw data
+
     DA->>EF: createEntity(rawData, metadata)
-    EF->>VOAEF: create entity with value objects
-    
-    loop For each Value Object field
+    EF->>VOAEF: create entity with Value Objects
+
+    loop for each Value Object field
         VOAEF->>VOR: getConverter(fieldType)
         VOR-->>VOAEF: converter instance
-        
+
         VOAEF->>VOC: fromPrimitive(rawValue)
         VOC->>VO: create value object
         VO-->>VOC: value object instance
         VOC-->>VOAEF: value object
-        
+
         VOAEF->>Entity: setField(valueObject)
     end
-    
-    VOAEF-->>EF: entity with value objects
+
+    VOAEF-->>EF: entity with Value Objects
     EF-->>DA: hydrated entity
-    
-    Note over Entity,DA: Entity Persistence
-    
+
+    Note over Entity,DA: Persistence
+
     Entity->>EF: persist entity
     EF->>VOAEF: extract data for persistence
-    
-    loop For each Value Object field
+
+    loop for each Value Object field
         VOAEF->>Entity: getField()
         Entity-->>VOAEF: value object
-        
+
         VOAEF->>VOC: toPrimitive(valueObject)
         VOC->>VO: toPrimitive()
         VO-->>VOC: primitive value
         VOC-->>VOAEF: primitive value
     end
-    
+
     VOAEF-->>EF: primitive data
     EF-->>DA: data for storage
 ```
 
-## 6. Caching Strategy
+## 6. Caching strategy
 
 ```mermaid
 graph TB
-    subgraph "Cache Layers"
-        L1["`**L1 Cache**
-        Entity Cache
-        (Identity Map)`"]
-        
-        L2["`**L2 Cache**
-        Query Result Cache
-        (PSR-6 Compatible)`"]
-        
-        L3["`**L3 Cache**
-        Metadata Cache
-        (Class Metadata)`"]
+    subgraph cacheLayers [Cache layers]
+        L1["`**L1**
+        Entity cache
+        (identity map)`"]
+
+        L2["`**L2**
+        Query result cache
+        (PSR-6 compatible)`"]
+
+        L3["`**L3**
+        Metadata cache
+        (class metadata)`"]
     end
-    
-    subgraph "Cache Operations"
-        Read["`Read Operation`"]
-        Write["`Write Operation`"]
-        Invalidate["`Cache Invalidation`"]
-        Cleanup["`Cache Cleanup`"]
+
+    subgraph cacheOps [Cache operations]
+        Read["`Read`"]
+        Write["`Write`"]
+        Invalidate["`Invalidate`"]
+        Cleanup["`Cleanup`"]
     end
-    
-    subgraph "Cache Keys"
-        EntityKey["`Entity Key:
+
+    subgraph cacheKeys [Cache keys]
+        EntityKey["`Entity key:
         class_name:id`"]
-        
-        QueryKey["`Query Key:
+
+        QueryKey["`Query key:
         class_name:criteria_hash`"]
-        
-        MetadataKey["`Metadata Key:
+
+        MetadataKey["`Metadata key:
         class_name:version`"]
     end
-    
+
     Read --> L1
-    L1 -->|Miss| L2
-    L2 -->|Miss| L3
-    L3 -->|Miss| Database[(Database)]
-    
+    L1 -->|miss| L2
+    L2 -->|miss| L3
+    L3 -->|miss| Database[(Database)]
+
     Write --> L1
     Write --> L2
     Write --> L3
-    
+
     Invalidate --> L1
     Invalidate --> L2
     Invalidate --> L3
-    
-    Cleanup --> CacheCleaner["`CacheCleaner Utility`"]
+
+    Cleanup --> CacheCleaner["`CacheCleaner`"]
     CacheCleaner --> L1
     CacheCleaner --> L2
     CacheCleaner --> L3
-    
+
     L1 -.-> EntityKey
     L2 -.-> QueryKey
     L3 -.-> MetadataKey
-    
-    style L1 fill:#e3f2fd
-    style L2 fill:#f1f8e9
-    style L3 fill:#fff3e0
-    style Database fill:#ffebee
 ```
 
-## 7. Error Handling и Exception Flow
+## 7. Error handling and exception flow
 
 ```mermaid
 graph TB
-    subgraph "Exception Hierarchy"
-        BaseEx["`Base Exception`"]
+    subgraph exceptionHierarchy [Exception hierarchy]
+        BaseEx["`Base exception`"]
         CommitEx["`CommitFailedException`"]
-        DataEx["`DataAdapter Exceptions`"]
-        MetadataEx["`Metadata Exceptions`"]
-        ValidationEx["`Value Object Validation`"]
+        DataEx["`DataAdapter exceptions`"]
+        MetadataEx["`Metadata exceptions`"]
+        ValidationEx["`Value Object validation`"]
     end
-    
-    subgraph "Error Sources"
-        DB["`Database Errors`"]
-        Network["`Network Errors`"]
-        Validation["`Validation Errors`"]
-        Config["`Configuration Errors`"]
+
+    subgraph errorSources [Error sources]
+        DB["`Database errors`"]
+        Network["`Network errors`"]
+        Validation["`Validation errors`"]
+        Config["`Configuration errors`"]
     end
-    
-    subgraph "Error Handling"
-        Rollback["`Transaction Rollback`"]
-        Retry["`Retry Logic`"]
-        Logging["`Error Logging`"]
-        Recovery["`Recovery Strategies`"]
+
+    subgraph errorHandling [Error handling]
+        Rollback["`Transaction rollback`"]
+        Retry["`Retry logic`"]
+        Logging["`Error logging`"]
+        Recovery["`Recovery strategies`"]
     end
-    
-    subgraph "Recovery Actions"
-        ClearCache["`Clear Cache`"]
-        ResetConnection["`Reset Connection`"]
-        Detach["`Detach Entities`"]
-        Notify["`Notify Listeners`"]
+
+    subgraph recoveryActions [Recovery actions]
+        ClearCache["`Clear cache`"]
+        ResetConnection["`Reset connection`"]
+        Detach["`Detach entities`"]
+        Notify["`Notify listeners`"]
     end
-    
+
     DB --> DataEx
     Network --> CommitEx
     Validation --> ValidationEx
     Config --> MetadataEx
-    
+
     BaseEx --> CommitEx
     BaseEx --> DataEx
     BaseEx --> MetadataEx
     BaseEx --> ValidationEx
-    
+
     CommitEx --> Rollback
     DataEx --> Retry
     MetadataEx --> Recovery
     ValidationEx --> Logging
-    
+
     Rollback --> ClearCache
     Retry --> ResetConnection
     Recovery --> Detach
     Logging --> Notify
-    
-    style CommitEx fill:#ffcdd2
-    style DataEx fill:#ffe0b2
-    style MetadataEx fill:#f8bbd9
-    style ValidationEx fill:#d1c4e9
 ```
 
-## Заключение
+## Summary
 
-Эти диаграммы показывают детальные взаимодействия компонентов Adaptive Entity Manager:
+These diagrams show how Adaptive Entity Manager behaves at runtime:
 
-- **Инициализация**: Пошаговый процесс создания и настройки EntityManager
-- **Жизненный цикл**: Состояния сущностей и переходы между ними
-- **Запросы**: Полный цикл выполнения запросов с кешированием
-- **Коммит**: Транзакционный процесс сохранения изменений
-- **Value Objects**: Автоматическая конвертация между примитивами и объектами
-- **Кеширование**: Многоуровневая стратегия кеширования
-- **Обработка ошибок**: Комплексная система обработки исключений
+- **Initialization:** how `EntityManager` is constructed and wired
+- **Lifecycle:** entity states and allowed transitions
+- **Queries:** repository queries, optional caching, adapter access
+- **Commit:** transactional flush with ordered operations
+- **Value Objects:** primitive ↔ object conversion during hydration and persistence
+- **Caching:** layered read/write and invalidation concepts
+- **Errors:** where failures surface and typical responses
 
-Эта архитектура обеспечивает надежность, производительность и расширяемость ORM системы. 
+Together they illustrate a modular architecture focused on reliability, performance hooks, and extension points.

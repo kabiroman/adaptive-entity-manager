@@ -6,6 +6,8 @@ A flexible PHP package implementing the Doctrine ObjectManager interface for sea
 
 Adaptive Entity Manager (AEM) is a powerful entity management system that provides a unified interface for working with entities across multiple data sources. It implements Doctrine's ObjectManager interface while offering enhanced flexibility through its adapter-based architecture.
 
+AEM is particularly useful when you rely on **Doctrine DBAL** (or similar) for connections and SQL/query building, but **adopting full Doctrine ORM entity mapping is impractical**—for example, integrating several external or legacy databases with uneven schemas. In **hexagonal** (ports and adapters) architectures, place AEM in the infrastructure adapters behind your application or domain repositories so persistence concerns do not leak into the core model.
+
 ## Features
 
 - Pluggable data source adapters

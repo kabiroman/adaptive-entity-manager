@@ -1,12 +1,12 @@
-# 🔄 Сравнение с Doctrine ORM
+# Comparison with Doctrine ORM
 
-Adaptive Entity Manager был создан не как конкурент Doctrine ORM, а как **специализированный инструмент для миграции монолитных приложений** и постепенного перехода на Doctrine. Этот документ показывает архитектурные различия и объясняет назначение каждого решения.
+Adaptive Entity Manager was not built to compete with Doctrine ORM. It is a **specialized tool for migrating monolithic applications** and gradually moving toward Doctrine. This document explains the architectural differences and what each solution is for.
 
-## 📊 Сравнительная диаграмма архитектур
+## Architecture comparison
 
 ```mermaid
 graph TD
-    subgraph "🏗️ Adaptive Entity Manager Flow"
+    subgraph aemFlow [Adaptive Entity Manager flow]
         AEM_BL["Business Layer"]
         AEM_Entity["Entity"]
         AEM_Repo["Repository"]
@@ -14,8 +14,8 @@ graph TD
         AEM_UOW["UnitOfWork"]
         AEM_Persister["EntityPersister"]
         AEM_Adapter["DataAdapter"]
-        AEM_DS["Data Source<br/>(DB/API/File)"]
-        
+        AEM_DS["Data source<br/>(DB/API/File)"]
+
         AEM_BL --> AEM_Entity
         AEM_Entity --> AEM_Repo
         AEM_Repo --> AEM_Manager
@@ -24,8 +24,8 @@ graph TD
         AEM_Persister --> AEM_Adapter
         AEM_Adapter --> AEM_DS
     end
-    
-    subgraph "🏛️ Doctrine ORM Flow"
+
+    subgraph doctrineFlow [Doctrine ORM flow]
         DOC_BL["Business Layer"]
         DOC_Entity["Entity"]
         DOC_Repo["Repository"]
@@ -34,7 +34,7 @@ graph TD
         DOC_Persister["EntityPersister"]
         DOC_DBAL["DBAL"]
         DOC_DB["Database"]
-        
+
         DOC_BL --> DOC_Entity
         DOC_Entity --> DOC_Repo
         DOC_Repo --> DOC_Manager
@@ -43,171 +43,177 @@ graph TD
         DOC_Persister --> DOC_DBAL
         DOC_DBAL --> DOC_DB
     end
-    
-    %% Styling
-    classDef aemStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    classDef docStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef businessStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-    classDef dataStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    
-    class AEM_BL,DOC_BL businessStyle
-    class AEM_Entity,AEM_Repo,AEM_Manager,AEM_UOW,AEM_Persister,AEM_Adapter aemStyle
-    class DOC_Entity,DOC_Repo,DOC_Manager,DOC_UOW,DOC_Persister,DOC_DBAL docStyle
-    class AEM_DS,DOC_DB dataStyle
 ```
 
-## 🎯 Назначение и цели
+## Purpose and goals
 
 ### Adaptive Entity Manager
-**Цель**: Инструмент для поэтапной миграции и разбиения монолита
-- 🔧 **Переходный период**: Помогает мигрировать с legacy систем на современные решения
-- 🏗️ **Разбиение монолита**: Позволяет выделять сервисы с разными источниками данных
-- 🔄 **Постепенный переход**: Обеспечивает мягкую миграцию на Doctrine
-- 🎛️ **Гибкость источников**: Работает с DB, API, файлами одновременно
+
+**Goal:** incremental migration and splitting a monolith.
+
+- **Transition period:** helps move from legacy stacks to modern stacks
+- **Monolith decomposition:** services can use different data sources
+- **Gradual path:** smooth stepping stone toward Doctrine
+- **Source flexibility:** DB, HTTP APIs, files, and more in one app
 
 ### Doctrine ORM
-**Цель**: Полнофункциональная промышленная ORM для долгосрочного использования
-- 🏛️ **Production-ready**: Зрелое решение для крупных проектов  
-- 📊 **Реляционные БД**: Мощная работа с SQL базами данных
-- 🔍 **DQL**: Объектно-ориентированный язык запросов
-- 🛡️ **Стабильность**: Многолетняя экосистема и поддержка
 
-## ⚡ Анализ различий
+**Goal:** full-featured, long-lived ORM for relational persistence.
 
-### Архитектурные различия
+- **Production-grade:** mature choice for large projects
+- **Relational databases:** deep SQL integration
+- **DQL:** object-oriented query language
+- **Stability:** large ecosystem and long-term support
 
-| Аспект | Adaptive Entity Manager | Doctrine ORM |
-|--------|------------------------|--------------|
-| **Слои абстракции** | Меньше (7 слоев) | Больше (8 слоев) |
-| **Источники данных** | Любые (DB/API/Files) | Только реляционные БД |
-| **Адаптер данных** | `DataAdapter` (универсальный) | `DBAL` (только SQL) |
-| **Сложность настройки** | Простая | Более сложная |
-| **Время запуска** | Быстрее | Медленнее |
+## Difference analysis
 
-### 🟢 Преимущества Adaptive Entity Manager
+### Architectural differences
 
-**Для миграционных проектов:**
-- ✅ **Быстрый старт**: Можно подключить к любому источнику данных за минуты
-- ✅ **Гибридная архитектура**: Одновременная работа с БД и API в одном приложении
-- ✅ **Малый overhead**: Минимальные накладные расходы на абстракции
-- ✅ **Value Objects из коробки**: Встроенная поддержка без дополнительной настройки
-- ✅ **Простая отладка**: Меньше слоев = проще найти проблему
-- ✅ **Легкий рефакторинг**: Постепенная замена адаптеров без изменения бизнес-логики
+| Aspect | Adaptive Entity Manager | Doctrine ORM |
+|--------|-------------------------|--------------|
+| **Abstraction depth** | Fewer layers (about 7) | More layers (about 8) |
+| **Data sources** | Any (DB/API/files) | Relational databases |
+| **Data access** | `DataAdapter` (pluggable) | `DBAL` (SQL) |
+| **Setup complexity** | Relatively simple | More involved |
+| **Time to first value** | Usually faster | Usually slower |
 
-**Техническая производительность:**
-- 🚀 **Меньше вызовов**: Прямая связь EntityPersister → DataAdapter
-- 🚀 **Быстрая гидратация**: Упрощенный процесс создания объектов
-- 🚀 **Кеширование на уровне адаптера**: Более гранулярный контроль
+### Strengths of Adaptive Entity Manager
 
-### 🔴 Ограничения Adaptive Entity Manager
+**For migration-style projects:**
 
-**Что НЕ является целью:**
-- ❌ **Не для production на годы**: Это переходное решение
-- ❌ **Ограниченный функционал**: Нет сложных связей как в Doctrine  
-- ❌ **Нет экосистемы**: Нет готовых бандлов, миграций, консольных команд
-- ❌ **Простые запросы**: Нет аналога DQL для сложных выборок
-- ❌ **Мало готовых решений**: Меньше документации и туториалов
+- **Fast start:** wire a new data source in minutes
+- **Hybrid architecture:** DB and APIs side by side
+- **Low overhead:** fewer abstraction layers
+- **Value Objects:** built-in conversion support
+- **Easier debugging:** fewer layers to trace
+- **Incremental refactors:** swap adapters without rewriting domain code
 
-### 🟡 Преимущества Doctrine ORM
+**Technical performance:**
 
-**Для долгосрочных проектов:**
-- ✅ **Промышленная зрелость**: Годы использования в крупных проектах
-- ✅ **Богатая экосистема**: Symfony интеграция, миграции, консольные команды
-- ✅ **DQL**: Мощный язык запросов для сложной бизнес-логики
-- ✅ **Связи и ассоциации**: Полная поддержка реляционных связей
-- ✅ **Расширения**: Gedmo, Stof, множество готовых решений
-- ✅ **Сообщество**: Большое комьюнити и поддержка
+- **Fewer hops:** straight path `EntityPersister` → `DataAdapter`
+- **Simpler hydration:** lighter object creation path
+- **Adapter-level caching:** fine-grained control
 
-### 🔴 Ограничения Doctrine ORM
+### Limitations of Adaptive Entity Manager
 
-**Для миграционных проектов:**
-- ❌ **Сложность настройки**: Требует серьезной подготовки метаданных
-- ❌ **Только SQL БД**: Невозможно работать с API или файлами как с сущностями
-- ❌ **Тяжелый DBAL**: Дополнительный слой абстракции для простых операций
-- ❌ **Медленный старт**: Долгая настройка для простых задач
-- ❌ **Overhead**: Много памяти и вычислений для небольших проектов
+**Not the primary goal:**
 
-## 🛣️ Стратегия миграции
+- **Not “ORM for the next decade”:** positioned as a transitional mapper
+- **Narrower feature set:** no Doctrine-grade association graph
+- **Smaller ecosystem:** fewer bundles, migrations, console tools out of the box
+- **Query power:** no DQL equivalent for heavy reporting
+- **Less community material:** fewer tutorials and plugins
 
-### Этап 1: Внедрение Adaptive Entity Manager
+### Strengths of Doctrine ORM
+
+**For long-running projects:**
+
+- **Industrial maturity:** proven in large systems
+- **Rich ecosystem:** Symfony integration, migrations, CLI
+- **DQL:** powerful queries for complex domains
+- **Associations:** full relational modeling
+- **Extensions:** Gedmo, Stof, and many others
+- **Community:** large support surface
+
+### Limitations of Doctrine ORM
+
+**For migration-heavy situations:**
+
+- **Heavier setup:** metadata and mapping discipline required
+- **SQL-centric:** APIs and files are not first-class “entities”
+- **DBAL weight:** more abstraction than some small tasks need
+- **Slower bootstrap:** setup cost for quick experiments
+- **Runtime cost:** more memory and work for tiny apps
+
+## Migration strategy
+
+### Phase 1: Introduce Adaptive Entity Manager
+
 ```php
-// Подключаем AEM к существующему legacy коду
+// Connect AEM to existing legacy code
 $entityManager = new AdaptiveEntityManager($config);
 
-// Создаем адаптеры для текущих источников данных
+// Add adapters for current data sources
 $legacyDbAdapter = new LegacyDatabaseAdapter($oldConnection);
 $newApiAdapter = new ModernApiAdapter($httpClient);
 ```
 
-### Этап 2: Постепенное выделение сервисов
-```php
-// Часть данных уже в новом API
-$userService = new UserService($entityManager);
-$users = $userService->findActiveUsers(); // Работает с API
+### Phase 2: Gradually extract services
 
-// Часть еще в старой БД  
+```php
+// Some data already lives behind a new API
+$userService = new UserService($entityManager);
+$users = $userService->findActiveUsers(); // API-backed
+
+// Some data still in legacy DB
 $orderService = new OrderService($entityManager);
-$orders = $orderService->findUserOrders($userId); // Работает с legacy DB
+$orders = $orderService->findUserOrders($userId); // legacy DB
 ```
 
-### Этап 3: Миграция на Doctrine
+### Phase 3: Move to Doctrine
+
 ```php
-// Когда данные унифицированы, переходим на Doctrine
+// When data and boundaries stabilize, adopt Doctrine
 $doctrineEntityManager = EntityManager::create($connection, $config);
 
-// Меняем только инфраструктурный слой
-// Бизнес-логика остается той же!
+// Change the infrastructure layer
+// Domain logic can stay similar
 ```
 
-## 🎯 Когда использовать что?
+## When to use which
 
-### Используйте Adaptive Entity Manager если:
-- 🔄 **Мигрируете монолит** на микросервисы
-- 🏗️ **Разбиваете legacy** систему на части  
-- 🔌 **Работаете с разными источниками** данных одновременно
-- ⚡ **Нужен быстрый результат** без долгой настройки
-- 🎛️ **Требуется гибкость** в выборе хранилищ данных
-- 📦 **Внедряете Value Objects** в существующий код
+### Choose Adaptive Entity Manager when
 
-### Переходите на Doctrine ORM когда:
-- 🏗️ **Архитектура стабилизировалась** и источники данных определены
-- 📊 **Нужны сложные запросы** и связи между сущностями
-- 🛡️ **Проект переходит в production** на долгий срок
-- 👥 **В команде есть Doctrine эксперты**
-- 🔍 **Требуется DQL** для сложной аналитики
-- 🏛️ **Нужна экосистема** бандлов и расширений
+- **Migrating a monolith** toward services
+- **Splitting legacy** into bounded pieces
+- **Multiple data sources** must coexist
+- **You need speed** without weeks of ORM setup
+- **Storage flexibility** matters (DB + API + files)
+- **Value Objects** should land in brownfield code
 
-## 💡 Примеры реальных сценариев
+### Choose Doctrine ORM when
 
-### Сценарий 1: E-commerce миграция
+- **Architecture has stabilized** and sources are well defined
+- **Complex queries and associations** are central
+- **Long production lifetime** is expected
+- **The team knows Doctrine** well
+- **DQL** is required for analytics or heavy reads
+- **Ecosystem features** (migrations, bundles) matter
+
+## Example scenarios
+
+### Scenario 1: e-commerce modernization
+
 ```
-Legacy монолит → AEM (разбиение на сервисы) → Doctrine (итоговая архитектура)
+Legacy monolith → AEM (service extraction) → Doctrine (target architecture)
 
-Пользователи: старая БД → новый API → PostgreSQL
-Товары: файлы CSV → REST API → MySQL  
-Заказы: legacy БД → message queue → MongoDB
-```
-
-### Сценарий 2: CRM модернизация
-```
-Старый CRM → AEM (поэтапная миграция) → Doctrine (финальная система)
-
-Контакты: Access БД → временный API → PostgreSQL
-Документы: файловая система → S3 API → PostgreSQL
-Отчеты: Excel файлы → BI система → PostgreSQL
+Users: old DB → new API → PostgreSQL
+Products: CSV files → REST API → MySQL
+Orders: legacy DB → message queue → MongoDB
 ```
 
-## 🤝 Заключение
+### Scenario 2: CRM modernization
 
-**Adaptive Entity Manager** - это не конкурент Doctrine, а **союзник в процессе миграции**. Он решает специфическую задачу: помочь безболезненно перейти от legacy архитектуры к современным решениям.
-
-### Формула успеха:
 ```
-Legacy Монолит + AEM → Промежуточная Архитектура → Doctrine ORM
+Legacy CRM → AEM (incremental migration) → Doctrine (final stack)
+
+Contacts: Access DB → interim API → PostgreSQL
+Documents: filesystem → S3 API → PostgreSQL
+Reports: Excel exports → BI system → PostgreSQL
 ```
 
-**Цель**: Не заменить Doctrine, а **подготовить почву** для его успешного внедрения!
+## Conclusion
+
+**Adaptive Entity Manager** is not Doctrine’s competitor; it is **a migration ally**. It targets a specific problem: moving from legacy layouts toward modern persistence without a big-bang rewrite.
+
+### Success pattern
+
+```
+Legacy monolith + AEM → interim architecture → Doctrine ORM
+```
+
+**Aim:** not to replace Doctrine, but to **make Doctrine adoption realistic**.
 
 ---
 
-*Помните: лучший код - это код, который решает реальную задачу. AEM решает задачу миграции, Doctrine решает задачу долгосрочной разработки. Используйте правильный инструмент для правильной задачи! 🛠️* 
+*Pick the tool for the job: AEM fits migration and multi-source mapping; Doctrine fits long-term relational ORM.*

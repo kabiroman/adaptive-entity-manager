@@ -1,146 +1,144 @@
 ---
 name: project-maturity-roadmap
-overview: "План переводит Adaptive Entity Manager из состояния ранней публичной библиотеки к более зрелому OSS-пакету: стабильнее API, лучше документация, CI, статический анализ, примеры и более чистая DDD-архитектура."
+overview: "Grow Adaptive Entity Manager from an early public library into a more mature OSS package: stabler API, stronger documentation, CI, static analysis, examples, and cleaner DDD-oriented design."
 todos:
   - id: docs-positioning
-    content: Обновить позиционирование, README и англоязычную документацию.
+    content: Refresh positioning, README, and English-first documentation.
     status: pending
   - id: quality-gates
-    content: Добавить CI, PHPUnit matrix, static analysis и coding style checks.
+    content: Add CI, a PHPUnit version matrix, static analysis, and code style checks.
     status: pending
   - id: api-stability
-    content: Определить public/internal API, CHANGELOG и release policy.
+    content: Define public vs internal API, CHANGELOG discipline, and a simple release policy.
     status: pending
   - id: vo-mapping
-    content: Спроектировать и реализовать domain-agnostic conversion layer для VO.
+    content: Design and ship a domain-agnostic conversion layer for Value Objects.
     status: pending
   - id: ddd-examples
-    content: Добавить DDD aggregate mapping guidance и end-to-end examples.
+    content: Add DDD aggregate mapping guidance and end-to-end examples.
     status: pending
   - id: ecosystem-sync
-    content: Синхронизировать ядро с Symfony bundle и OpenTelemetry bridge.
+    content: Align core releases with the Symfony bundle and OpenTelemetry bridge.
     status: pending
 isProject: false
 ---
 
-# План повышения зрелости AEM
+# AEM open source maturity roadmap
 
-## Цель
+## Goal
 
-Довести проект до состояния, в котором его не стыдно активно показывать внешним PHP-разработчикам: понятное позиционирование, английская документация, проверяемое качество, стабильнее API и убедительные примеры использования.
+Reach a state where the project is easy to recommend to external PHP developers: clear positioning, English-first documentation, measurable quality gates, a more stable public surface, and compelling usage examples.
 
-## Текущее состояние
+## Current baseline
 
-Проект уже имеет хорошую базу: Composer package, публичный namespace, README, тесты, metadata/entity manager/unit of work/data adapter архитектуру. Основная ценность проекта — adaptive mapper для legacy и mixed data sources, а не попытка заменить Doctrine ORM.
+The project already has solid foundations: Composer packaging, a public namespace, README, tests, and a metadata / entity manager / unit of work / data adapter architecture. Its core value is **adaptive mapping** for legacy and mixed data sources—not replacing Doctrine ORM outright.
 
-Ключевые точки входа:
+Key entry points:
 
-- [/var/www/personal/adaptive-entity-manager/composer.json](/var/www/personal/adaptive-entity-manager/composer.json) — пакет, зависимости и тестовые команды.
-- [/var/www/personal/adaptive-entity-manager/src/AdaptiveEntityManager.php](/var/www/personal/adaptive-entity-manager/src/AdaptiveEntityManager.php) — основной публичный API.
-- [/var/www/personal/adaptive-entity-manager/src/UnitOfWork.php](/var/www/personal/adaptive-entity-manager/src/UnitOfWork.php) — commit/transaction lifecycle.
-- [/var/www/personal/adaptive-entity-manager/src/EntityPersister.php](/var/www/personal/adaptive-entity-manager/src/EntityPersister.php) — persistence flow и dirty tracking.
-- [/var/www/personal/adaptive-entity-manager/docs/rfc/domain-agnostic-value-object-mapping.md](/var/www/personal/adaptive-entity-manager/docs/rfc/domain-agnostic-value-object-mapping.md) — направление по чистому VO mapping.
+- [composer.json](composer.json) — package metadata, dependencies, and Composer scripts.
+- [src/AdaptiveEntityManager.php](src/AdaptiveEntityManager.php) — primary public API.
+- [src/UnitOfWork.php](src/UnitOfWork.php) — commit and transaction lifecycle.
+- [src/EntityPersister.php](src/EntityPersister.php) — persistence flow and dirty tracking.
+- [docs/rfc/domain-agnostic-value-object-mapping.md](docs/rfc/domain-agnostic-value-object-mapping.md) — direction for domain-clean Value Object mapping.
 
-## Этап 1: Упаковка и доверие
+## Phase 1: Packaging and trust
 
-Сначала стоит улучшить внешний вид проекта без изменения runtime-поведения.
+Improve outward presentation without changing runtime behavior yet.
 
-- Перевести ключевую документацию на английский и сделать английский canonical language.
-- Обновить README: clearly state purpose, non-goals, installation, minimal example, adapter example, limitations.
-- Добавить бейджи после настройки CI: tests, PHP version, license, Packagist version.
-- Явно описать статус проекта: experimental, beta, stable API или migration-oriented library.
-- Разделить документацию на user docs, architecture docs, RFC/ADR.
+- Make English the canonical documentation language for user-facing material.
+- Refresh README: purpose, non-goals, install steps, minimal example, adapter sample, known limitations.
+- Add badges after CI exists: tests, PHP version, license, Packagist.
+- State project status explicitly: experimental, beta, stable API, migration-oriented, etc.
+- Structure docs into user guides, architecture references, and RFC/ADR notes.
 
-Результат этапа: внешний пользователь понимает, зачем нужен AEM, где его применять и какие ограничения учитывать.
+**Outcome:** newcomers understand why AEM exists, where it fits, and what it deliberately does not solve.
 
-## Этап 2: Автоматическое качество
+## Phase 2: Automated quality
 
-Дальше нужно сделать так, чтобы базовое качество проверялось автоматически.
+Ensure baseline quality is checked automatically.
 
-- Добавить GitHub Actions для PHPUnit на нескольких PHP-версиях.
-- Добавить PHPStan или Psalm с умеренным стартовым уровнем.
-- Добавить PHP-CS-Fixer или ECS для единого стиля.
-- Убрать из Composer scripts shell-зависимости, если они мешают кроссплатформенности.
-- Зафиксировать минимальный quality gate: tests + static analysis + coding style.
+- GitHub Actions running PHPUnit on supported PHP versions.
+- PHPStan or Psalm starting at a pragmatic level.
+- PHP-CS-Fixer or ECS for consistent formatting.
+- Revisit Composer scripts that rely on shell tools if they hurt cross-platform usage.
+- Minimum gate: tests + static analysis + code style.
 
-Результат этапа: проект вызывает больше доверия как библиотека, а не только как идея.
+**Outcome:** the package feels like maintained OSS, not only a promising concept.
 
-## Этап 3: Стабилизация публичного API
+## Phase 3: Public API stabilization
 
-Перед активным продвижением стоит определить, какие интерфейсы являются стабильными контрактами.
+Before heavy promotion, clarify which surfaces are contractual.
 
-- Разделить public API и internal classes в документации.
-- Проверить интерфейсы `EntityManagerInterface`, `PersisterInterface`, `EntityDataAdapter`, `ClassMetadata`.
-- Решить, какие API можно менять в minor versions, а какие требуют major release.
-- Добавить CHANGELOG и простую release policy.
-- Начать фиксировать архитектурные решения через ADR после RFC.
+- Document public vs internal types.
+- Review `EntityManagerInterface`, `PersisterInterface`, `EntityDataAdapter`, `ClassMetadata`.
+- Decide semver rules: what may change in minor vs major releases.
+- Maintain CHANGELOG + a short release policy.
+- Promote accepted RFCs into ADRs.
 
-Результат этапа: пользователи понимают, на какие контракты можно опираться.
+**Outcome:** consumers know which types they can safely depend on.
 
-## Этап 4: Domain-Agnostic Value Object Mapping
+## Phase 4: Domain-agnostic Value Object mapping
 
-Это главный архитектурный шаг для DDD-совместимости.
+The largest architectural step toward DDD-friendly usage.
 
-- Не заменять `ValueObjectInterface` напрямую на `Stringable`.
-- Ввести общий conversion layer, который не зависит от AEM-интерфейсов в домене.
-- Оставить `ValueObjectInterface` как backward-compatible convention.
-- Добавить поддержку converters через metadata options: `class`, `converter`, `from`, `to`, `format`.
-- Поддержать built-in cases: `Stringable`, `BackedEnum`, `JsonSerializable`, `DateTimeInterface`.
-- Обновить документацию `VALUE_OBJECTS.md`: новые примеры должны показывать чистые доменные VO.
+- Do not pretend `Stringable` alone replaces a conversion story.
+- Introduce a conversion layer that keeps domain classes free of AEM-specific contracts.
+- Keep `ValueObjectInterface` for backward compatibility.
+- Support converters via metadata options such as `class`, `converter`, `from`, `to`, `format`.
+- Ship built-in handling for `Stringable`, `BackedEnum`, `JsonSerializable`, `DateTimeInterface`.
+- Update [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md) with examples of clean domain VOs.
 
-Результат этапа: доменный слой не обязан зависеть от `Kabiroman\AEM\ValueObject\ValueObjectInterface`.
+**Outcome:** domain code is not forced to implement `Kabiroman\AEM\ValueObject\ValueObjectInterface`.
 
-## Этап 5: DDD Aggregate Mapping
+## Phase 5: DDD aggregate mapping
 
-После VO mapping можно аккуратно развивать AEM как mapper для агрегатов.
+After VO mapping lands, position AEM as an aggregate-oriented mapper.
 
-- Описать рекомендуемый pattern: repository работает с aggregate root, не с любой внутренней entity.
-- Добавить metadata option для aggregate root только если это реально нужно API.
-- Исследовать reconstitution через named constructors или factory methods.
-- Ограничить или явно задокументировать lazy loading внутри aggregate boundary.
-- Добавить пример `Order` aggregate с `OrderId`, `Email`, `OrderStatus`, adapter и repository.
+- Document repositories targeting aggregate roots rather than every internal entity.
+- Add aggregate metadata only if the API truly needs it.
+- Explore reconstitution via named constructors or factories.
+- Constrain or clearly document lazy loading inside aggregate boundaries.
+- Provide an `Order`-style example covering `OrderId`, `Email`, `OrderStatus`, adapters, and repositories.
 
-Результат этапа: AEM получает сильную нишу — не “ещё одна ORM”, а mapper для legacy/mixed sources и DDD-моделей.
+**Outcome:** AEM’s niche becomes “mapper for legacy/mixed sources with DDD-friendly boundaries,” not “generic ORM.”
 
-## Этап 6: Примеры и сценарии использования
+## Phase 6: Examples and scenarios
 
-Для OSS-библиотеки важны не только API, но и быстрый путь к пониманию.
+Great libraries need fast on-ramps.
 
-- Добавить `examples/legacy-db` с простым adapter.
-- Добавить `examples/rest-api-adapter`.
-- Добавить `examples/ddd-aggregate`.
-- Добавить короткие integration tests или smoke tests для примеров.
-- Обновить README ссылками на эти сценарии.
+- `examples/legacy-db` with a minimal adapter.
+- `examples/rest-api-adapter`.
+- `examples/ddd-aggregate`.
+- Short integration or smoke tests for examples when feasible.
+- Link those scenarios from README.
 
-Результат этапа: новый пользователь может за 10-15 минут понять практическую пользу библиотеки.
+**Outcome:** a motivated developer can see value within ten to fifteen minutes.
 
-## Этап 7: Наблюдаемость и экосистема
+## Phase 7: Observability and ecosystem
 
-Этот этап важен после стабилизации ядра.
+After the core stabilizes, tighten the wider story.
 
-- Согласовать API ядра с Symfony bundle.
-- Проверить, что OpenTelemetry bridge покрывает ключевые lifecycle operations.
-- Документировать extension points: adapters, converters, metadata providers, repositories.
-- Подготовить migration guide для пользователей старого VO API.
+- Keep the Symfony bundle aligned with core semver expectations.
+- Confirm the OpenTelemetry bridge covers key lifecycle operations.
+- Document extension points: adapters, converters, metadata providers, repositories.
+- Publish a migration guide for legacy VO-interface users.
 
-Результат этапа: вокруг AEM появляется понятная экосистема, а не только standalone package.
+**Outcome:** AEM reads as a small ecosystem, not a lone package.
 
-## Рекомендуемый порядок работ
+## Recommended sequencing
 
-1. Сначала документация и CI, потому что это дешево и сразу повышает доверие.
-2. Затем static analysis и coding style, чтобы дальнейшие изменения были безопаснее.
-3. Потом RFC по VO перевести в реализацию через converter layer.
-4. После этого делать DDD aggregate examples и reconstitution API.
-5. В конце синхронизировать Symfony bundle и observability bridge.
+1. Documentation + CI first (high trust, low risk).
+2. Static analysis + coding standards next (safer refactors afterward).
+3. Implement the VO RFC as a real conversion layer.
+4. Layer in DDD aggregate examples and optional reconstitution APIs.
+5. Finally synchronize the Symfony bundle and observability tooling.
 
-## Критерий хорошего уровня
+## Definition of “good maturity”
 
-Проект можно считать на хорошем уровне, когда:
-
-- README и основные docs на английском.
-- CI стабильно гоняет PHPUnit на поддерживаемых PHP-версиях.
-- Static analysis проходит на согласованном уровне.
-- Есть понятный статус стабильности API.
-- Domain VO не обязаны реализовывать AEM-интерфейсы.
-- Есть минимум два-три рабочих end-to-end examples.
-- Документация ясно говорит, где AEM уместен, а где лучше использовать Doctrine напрямую.
+- README and primary docs are English-first.
+- CI exercises PHPUnit on every supported PHP version.
+- Static analysis runs at an agreed level with clean baseline.
+- Stability expectations for the public API are explicit.
+- Domain Value Objects do not depend on AEM interfaces.
+- At least two or three credible end-to-end examples exist.
+- Documentation states when AEM is appropriate—and when Doctrine ORM should be used directly.

@@ -1,27 +1,29 @@
-# 📊 Индекс диаграмм Adaptive Entity Manager
+# Diagram index — Adaptive Entity Manager
 
-Добро пожаловать в коллекцию диаграмм архитектуры Adaptive Entity Manager! Этот документ содержит навигацию по всем диаграммам проекта.
+Welcome to the Adaptive Entity Manager architecture diagram collection. This page is the navigation hub for all project diagrams.
 
-## 🎯 Обзор проекта
+## Project overview
 
-Adaptive Entity Manager — это гибкая PHP ORM библиотека, которая предоставляет адаптивный подход к управлению сущностями с поддержкой различных источников данных, Value Objects, и событийной системы.
+Adaptive Entity Manager is a flexible PHP library for entity management across data sources. It supports adapters, Value Objects, and an event-driven entity lifecycle.
 
-### Ключевые особенности:
-- 🔄 **Адаптивные источники данных** через систему адаптеров
-- 💎 **Value Objects** с автоматической конверсией
-- 🎭 **Система событий** для жизненного цикла сущностей
-- 🚀 **Многоуровневое кеширование** для производительности
-- 📦 **Unit of Work** для управления изменениями
-- 🔧 **Расширяемость** через интерфейсы и фабрики
+### Key features
 
-## 📚 Коллекция диаграмм
+- **Adaptive data sources** through the adapter system
+- **Value Objects** with automatic conversion
+- **Event system** for the entity lifecycle
+- **Layered caching** for performance
+- **Unit of Work** for change tracking
+- **Extensibility** via interfaces and factories
 
-### 1. [Архитектурные диаграммы](./ARCHITECTURE_DIAGRAMS.md)
-**Общий обзор системы и ее компонентов**
+## Diagram collection
+
+### 1. [Architecture diagrams](./ARCHITECTURE_DIAGRAMS.md)
+
+**High-level system and component overview**
 
 ```mermaid
 mindmap
-  root((Архитектура))
+  root((Architecture))
     Core Layer
       AdaptiveEntityManager
       UnitOfWork
@@ -43,145 +45,148 @@ mindmap
       CacheSystem
 ```
 
-**Включает:**
-- 🏗️ Общая архитектура системы
-- 🔄 Entity Manager и его взаимодействия
-- 📊 Unit of Work Pattern
-- 🔌 Data Adapter System
-- 💎 Value Object System
-- 📡 Event System и Lifecycle
-- 🗃️ Metadata System
+**Includes:**
 
-### 2. [Диаграммы взаимодействий](./INTERACTION_DIAGRAMS.md)
-**Детальные процессы и взаимодействия компонентов**
+- Overall system architecture
+- Entity Manager and how it collaborates with other parts
+- Unit of Work pattern
+- Data adapter system
+- Value Object system
+- Event system and lifecycle
+- Metadata system
+
+### 2. [Interaction diagrams](./INTERACTION_DIAGRAMS.md)
+
+**Detailed flows and component interactions**
 
 ```mermaid
 journey
-    title Жизненный цикл работы с сущностью
-    section Инициализация
-      Создание EntityManager: 5: Client
-      Настройка компонентов: 4: System
-    section Работа с данными
-      Поиск сущности: 5: Client
-      Изменение данных: 4: Client
-      Сохранение изменений: 3: Client
-    section Завершение
-      Коммит транзакции: 2: System
-      Очистка кеша: 1: System
+    title Entity lifecycle journey
+    section Initialization
+      Create EntityManager: 5: Client
+      Configure components: 4: System
+    section Working with data
+      Find entity: 5: Client
+      Change data: 4: Client
+      Persist changes: 3: Client
+    section Completion
+      Commit transaction: 2: System
+      Clear cache: 1: System
 ```
 
-**Включает:**
-- 🚀 Процесс инициализации Entity Manager
-- 🔄 Жизненный цикл сущности
-- 🔍 Процесс выполнения запроса
-- 💾 Процесс коммита (flush)
-- 🔄 Value Object Conversion Flow
-- 🗃️ Caching Strategy
-- ⚠️ Error Handling и Exception Flow
+**Includes:**
 
-### 3. [Диаграммы классов](./CLASS_DIAGRAMS.md)
-**UML структура классов и их взаимосвязи**
+- Entity Manager initialization
+- Entity lifecycle
+- Query execution flow
+- Commit (`flush`) flow
+- Value Object conversion flow
+- Caching strategy
+- Error handling and exception flow
+
+### 3. [Class diagrams](./CLASS_DIAGRAMS.md)
+
+**UML-style class structure and relationships**
 
 ```mermaid
 graph LR
-    subgraph "Основные компоненты"
+    subgraph coreComponents [Core components]
         A[Entity Manager] --> B[Unit of Work]
         A --> C[Metadata System]
         A --> D[Repository Layer]
     end
-    
-    subgraph "Поддерживающие системы"
+
+    subgraph supportingSystems [Supporting systems]
         E[Data Adapters] --> F[Value Objects]
         G[Event System] --> H[Cache System]
     end
-    
+
     A --> E
     B --> G
     C --> H
-    
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style E fill:#e8f5e8
-    style F fill:#fff3e0
 ```
 
-**Включает:**
-- 🏛️ Core Entity Manager Classes
-- 📊 Metadata System Classes
-- 🔌 Data Adapter Classes
-- 💾 Persistence Layer Classes
-- 💎 Value Object Classes
-- 📦 Repository Classes
-- 📡 Event System Classes
-- 🗃️ Cache Classes
-- 🏭 Factory Classes
-- ⚠️ Exception Classes
+**Includes:**
 
-## 🗺️ Навигационная карта
+- Core Entity Manager classes
+- Metadata system classes
+- Data adapter classes
+- Persistence layer classes
+- Value Object classes
+- Repository classes
+- Event system classes
+- Cache classes
+- Factory classes
+- Exception classes
 
-### Для разработчиков, начинающих работу с проектом:
-1. Начните с [архитектурных диаграмм](./ARCHITECTURE_DIAGRAMS.md) для понимания общей структуры
-2. Изучите [диаграммы классов](./CLASS_DIAGRAMS.md) для понимания объектной модели
-3. Просмотрите [диаграммы взаимодействий](./INTERACTION_DIAGRAMS.md) для понимания процессов
+## Navigation map
 
-### Для архитекторов и ведущих разработчиков:
-1. [Архитектурные диаграммы](./ARCHITECTURE_DIAGRAMS.md) → Общее видение системы
-2. [Диаграммы взаимодействий](./INTERACTION_DIAGRAMS.md) → Детали реализации
-3. [Диаграммы классов](./CLASS_DIAGRAMS.md) → Техническая реализация
+### For developers new to the project
 
-### Для DevOps и администраторов:
-1. Кеширование и производительность → [Архитектурные диаграммы](./ARCHITECTURE_DIAGRAMS.md)
-2. Обработка ошибок → [Диаграммы взаимодействий](./INTERACTION_DIAGRAMS.md)
-3. Конфигурация → [Диаграммы классов](./CLASS_DIAGRAMS.md)
+1. Start with [architecture diagrams](./ARCHITECTURE_DIAGRAMS.md) for the big picture.
+2. Read [class diagrams](./CLASS_DIAGRAMS.md) for the object model.
+3. Review [interaction diagrams](./INTERACTION_DIAGRAMS.md) for runtime behavior.
 
-## 🔍 Быстрый поиск диаграмм
+### For architects and tech leads
 
-| Тема | Файл | Диаграмма |
-|------|------|-----------|
-| Общая архитектура | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #1 |
+1. [Architecture diagrams](./ARCHITECTURE_DIAGRAMS.md) — system view
+2. [Interaction diagrams](./INTERACTION_DIAGRAMS.md) — implementation detail
+3. [Class diagrams](./CLASS_DIAGRAMS.md) — code structure
+
+### For DevOps and operators
+
+1. Caching and performance → [Architecture diagrams](./ARCHITECTURE_DIAGRAMS.md)
+2. Error handling → [Interaction diagrams](./INTERACTION_DIAGRAMS.md)
+3. Configuration → [Class diagrams](./CLASS_DIAGRAMS.md)
+
+## Quick diagram lookup
+
+| Topic | File | Diagram |
+|------|------|---------|
+| Overall architecture | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #1 |
 | Unit of Work | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #3 |
-| Адаптеры данных | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #4 |
+| Data adapters | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #4 |
 | Value Objects | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #5 |
-| События | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #6 |
-| Инициализация | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #1 |
-| Жизненный цикл | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #2 |
-| Выполнение запросов | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #3 |
-| Процесс коммита | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #4 |
-| Кеширование | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #6 |
-| Обработка ошибок | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #7 |
-| Основные классы | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #1 |
-| Система метаданных | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #2 |
-| Персистенция | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #4 |
-| Репозитории | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #6 |
+| Events | [ARCHITECTURE_DIAGRAMS.md](./ARCHITECTURE_DIAGRAMS.md) | #6 |
+| Initialization | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #1 |
+| Lifecycle | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #2 |
+| Query execution | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #3 |
+| Commit flow | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #4 |
+| Caching | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #6 |
+| Error handling | [INTERACTION_DIAGRAMS.md](./INTERACTION_DIAGRAMS.md) | #7 |
+| Core classes | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #1 |
+| Metadata system | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #2 |
+| Persistence | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #4 |
+| Repositories | [CLASS_DIAGRAMS.md](./CLASS_DIAGRAMS.md) | #6 |
 
-## 📋 Легенда символов
+## Symbol legend
 
-| Символ | Значение |
-|--------|----------|
-| 🏗️ | Архитектура и структура |
-| 🔄 | Процессы и циклы |
-| 💾 | Персистенция и хранение |
-| 🔍 | Поиск и запросы |
-| 📡 | События и коммуникации |
-| 🗃️ | Кеширование и оптимизация |
-| ⚠️ | Обработка ошибок |
-| 🔧 | Конфигурация и настройка |
+| Symbol | Meaning |
+|--------|---------|
+| 🏗️ | Architecture and structure |
+| 🔄 | Processes and cycles |
+| 💾 | Persistence and storage |
+| 🔍 | Search and queries |
+| 📡 | Events and messaging |
+| 🗃️ | Caching and optimization |
+| ⚠️ | Error handling |
+| 🔧 | Configuration and setup |
 | 💎 | Value Objects |
-| 📦 | Компоненты и модули |
+| 📦 | Components and modules |
 
-## 🚀 Следующие шаги
+## Next steps
 
-После изучения диаграмм рекомендуется:
+After reviewing the diagrams:
 
-1. **Изучить примеры кода** в директории `examples/`
-2. **Просмотреть тесты** в директории `tests/` для понимания использования
-3. **Прочитать документацию** в файлах `VALUE_OBJECTS.md`, `CACHING.md`, `TESTING.md`
-4. **Изучить исходный код** основных классов в директории `src/`
+1. **Explore examples** in the `examples/` directory (if present).
+2. **Read tests** in `tests/` for usage patterns.
+3. **Read** `VALUE_OBJECTS.md`, `CACHING.md`, and `TESTING.md`.
+4. **Browse** source under `src/` for core classes.
 
-## 📞 Обратная связь
+## Feedback
 
-Если у вас есть вопросы по диаграммам или предложения по их улучшению, создайте issue в репозитории проекта.
+Open an issue in the project repository for questions or diagram improvements.
 
 ---
 
-*Диаграммы созданы с использованием Mermaid.js для обеспечения интерактивности и читаемости в GitHub/GitLab.* 
+*Diagrams use Mermaid for readability on GitHub and GitLab.*

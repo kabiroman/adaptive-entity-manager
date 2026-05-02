@@ -1,265 +1,261 @@
-# 🛣️ Roadmap миграции с Legacy на Doctrine
+# Migration roadmap: from legacy to Doctrine
 
-Этот документ описывает пошаговую стратегию миграции от монолитной legacy системы к современной архитектуре с Doctrine ORM через Adaptive Entity Manager.
+A step-by-step strategy for moving from a monolithic legacy system toward a modern Doctrine ORM architecture using Adaptive Entity Manager as a bridge.
 
-## 📊 Временная линия миграции
+## Migration timeline
 
 ```mermaid
 flowchart LR
-    %% Этап 1: Legacy
-    subgraph "📅 Legacy"
-        L1["🏚️ Монолитное<br/>приложение"]
-        L2["🗄️ Legacy DB"]
-        L3["📝 Смешанный<br/>код"]
+    subgraph legacyStage [Legacy]
+        L1["Monolithic<br/>application"]
+        L2["Legacy DB"]
+        L3["Mixed<br/>codebase"]
         L1 --> L2
         L2 --> L3
     end
-    
-    %% Этап 2: AEM
-    subgraph "🔄 AEM Integration"
-        A1["🏗️ Adaptive<br/>Entity Manager"]
-        A2["🔌 Legacy DB<br/>Adapter"]
-        A3["📦 Value<br/>Objects"]
+
+    subgraph aemStage [AEM integration]
+        A1["Adaptive<br/>Entity Manager"]
+        A2["Legacy DB<br/>adapter"]
+        A3["Value<br/>Objects"]
         A1 --> A2
         A2 --> A3
     end
-    
-    %% Этап 3: Гибрид
-    subgraph "🎯 Hybrid Architecture"
-        M1["🏛️ Entity<br/>Manager"]
-        M2["🔄 Multi<br/>Sources"]
-        M3["🌐 APIs &<br/>Files"]
+
+    subgraph hybridStage [Hybrid architecture]
+        M1["Entity<br/>Manager"]
+        M2["Multiple<br/>sources"]
+        M3["APIs and<br/>files"]
         M1 --> M2
         M2 --> M3
     end
-    
-    %% Этап 4: Финал
-    subgraph "🏆 Final State"
-        F1["🏛️ Doctrine<br/>ORM"]
-        F2["🗄️ Unified<br/>Database"]
-        F3["🚀 Production<br/>Ready"]
+
+    subgraph finalStage [Final state]
+        F1["Doctrine<br/>ORM"]
+        F2["Unified<br/>database"]
+        F3["Production<br/>ready"]
         F1 --> F2
         F2 --> F3
     end
-    
-    %% Horizontal flow between stages
-    L3 -.->|"Integrate"| A1
-    A3 -.->|"Expand"| M1
-    M3 -.->|"Migrate"| F1
-    
-    %% Styling
-    classDef legacyStyle fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px,color:#000
-    classDef aemStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
-    classDef hybridStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
-    classDef finalStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
-    
-    class L1,L2,L3 legacyStyle
-    class A1,A2,A3 aemStyle
-    class M1,M2,M3 hybridStyle
-    class F1,F2,F3 finalStyle
+
+    L3 -.->|integrate| A1
+    A3 -.->|expand| M1
+    M3 -.->|migrate| F1
 ```
 
-## 🔍 Детальный разбор этапов
+## Stages in detail
 
-### 📅 Этап 1: Legacy State (Текущее состояние)
-*Время: 0-2 недели (анализ и планирование)*
+### Stage 1: Legacy state
 
-#### 🏚️ Что имеем:
-- **Монолитное приложение** - все в одном большом проекте
-- **Legacy Database** - старая схема БД с "интересными" решениями
-- **Смешанный код** - SQL запросы вперемешку с бизнес-логикой
+*Typical duration: 0–2 weeks (analysis and planning)*
 
-#### 😰 Типичные проблемы:
-- Страшно что-то менять - все завязано на все
-- Тесты? Какие тесты? 
-- Документация существует только в головах ветеранов
-- "Работает - не трогай!" (но работает через раз)
+#### What you usually have
 
-#### 🎯 Задачи этапа:
+- **Monolithic application** — one large codebase
+- **Legacy database** — schemas full of “interesting” past decisions
+- **Mixed code** — SQL scattered through business logic
+
+#### Common pain points
+
+- Fear of change because everything depends on everything
+- Little or no automated tests
+- Documentation lives in people’s heads
+- “Do not touch it” culture (and it still breaks sometimes)
+
+#### Goals for this stage
+
 ```php
-// Анализируем текущий код
+// Understand what you have today
 $legacy = new LegacyAnalyzer();
 $tables = $legacy->analyzeDatabaseSchema();
 $dependencies = $legacy->findCodeDependencies();
-$pain_points = $legacy->identifyPainPoints(); // Их будет много 😅
+$pain_points = $legacy->identifyPainPoints(); // expect a long list
 ```
 
-**Мой совет**: Не пытайтесь сразу переписать все! Сначала поймите, что у вас есть. Создайте карту зависимостей. Найдите самые болезненные места.
+**Practical advice:** do not rewrite everything at once. Map dependencies, inventory schemas, and name the riskiest hotspots first.
 
 ---
 
-### 🔄 Этап 2: AEM Integration (Внедрение Adaptive Entity Manager)
-*Время: 2-4 недели (в зависимости от размера legacy)*
+### Stage 2: AEM integration
 
-#### 🏗️ Что делаем:
-- **Подключаем AEM** к существующей legacy БД
-- **Создаем Legacy DB Adapter** - мост между старым и новым
-- **Внедряем Value Objects** - приводим данные к человеческому виду
+*Typical duration: 2–4 weeks depending on legacy size*
 
-#### 💡 Магия происходит здесь:
+#### What you do
+
+- **Wire AEM** to the existing legacy database
+- **Build a legacy DB adapter** that translates old storage into entity operations
+- **Introduce Value Objects** so primitives gain validation and meaning
+
+#### Why it matters
+
 ```php
-// Вместо этого ужаса:
+// Instead of unstructured arrays:
 $result = mysql_query("SELECT user_id, user_email, user_balance FROM users WHERE user_id = $id");
 $user_data = mysql_fetch_assoc($result);
-$email = $user_data['user_email']; // А что если null?
-$balance = $user_data['user_balance']; // В копейках? В рублях?
+$email = $user_data['user_email']; // nullable? valid?
+$balance = $user_data['user_balance']; // cents? currency?
 
-// Получаем это:
+// You move toward typed access:
 $user = $userRepository->find($id);
-$email = $user->getEmail(); // Email Value Object с валидацией
-$balance = $user->getBalance(); // Money Value Object с валютой
+$email = $user->getEmail(); // Email Value Object
+$balance = $user->getBalance(); // Money Value Object
 ```
 
-#### 🚀 Преимущества AEM на этом этапе:
-- **Быстрый старт** - за день можно подключить к любой legacy БД
-- **Постепенность** - не нужно переписывать все сразу
-- **Безопасность** - старый код продолжает работать
-- **Value Objects** - данные становятся типизированными и безопасными
+#### AEM strengths here
 
-#### ⚠️ Подводные камни:
-- Соблазн сразу переписать весь код (не поддавайтесь!)
-- Legacy схема БД может быть... творческой
-- Команда может сопротивляться изменениям
+- **Fast attach** to a legacy database in days, not months
+- **Incremental rollout** — one bounded context at a time
+- **Low blast radius** — old paths can keep running in parallel
+- **Richer data model** via Value Objects
 
-**Мой совет**: Начните с одного модуля. Покажите результат. Пусть команда увидит, как становится проще работать. Успех породит желание продолжать!
+#### Watch outs
+
+- Temptation to rewrite everything immediately
+- Creative legacy schemas that fight elegant mapping
+- Team skepticism without a visible win
+
+**Practical advice:** pick one module, prove the pattern, let the team feel the difference. Momentum beats big-bang plans.
 
 ---
 
-### 🎯 Этап 3: Hybrid Architecture (Гибридная архитектура)
-*Время: 1-3 месяца (самый интересный этап)*
+### Stage 3: Hybrid architecture
 
-#### 🏛️ Что происходит:
-- **Entity Manager** становится центральным хабом
-- **Multi Sources** - подключаем разные источники данных
-- **APIs & Files** - выносим части системы в отдельные сервисы
+*Typical duration: 1–3 months — often the noisiest phase*
 
-#### 🎪 Цирк с конями начинается:
+#### What changes
+
+- **Entity Manager** becomes the coordination point
+- **Multiple sources** coexist: old DB, new APIs, files, queues
+- **Services split out** while the UX stays stable
+
+#### Example shape
+
 ```php
-// Теперь у нас может быть такое:
 $userRepository = $em->getRepository(User::class);
-$user = $userRepository->find($userId); // Из legacy БД
+$user = $userRepository->find($userId); // legacy DB
 
-$profileRepository = $em->getRepository(UserProfile::class);  
-$profile = $profileRepository->find($userId); // Из нового API
+$profileRepository = $em->getRepository(UserProfile::class);
+$profile = $profileRepository->find($userId); // modern API
 
 $documentsRepository = $em->getRepository(Document::class);
-$documents = $documentsRepository->findByUser($userId); // Из файловой системы
+$documents = $documentsRepository->findByUser($userId); // filesystem or object storage
 
-// И все это работает как единое целое!
+// Application code can stay similar even though storage differs.
 ```
 
-#### 🌟 Магия гибридной архитектуры:
-- **Одновременно** работаем со старой БД и новыми API
-- **Постепенно** выносим части в микросервисы
-- **Прозрачно** для бизнес-логики - она не знает, откуда данные
-- **Безопасно** - можем откатиться на любом этапе
+#### Why hybrid helps
 
-#### 🏗️ Примеры адаптеров:
+- Old and new systems run side by side
+- Extract bounded contexts without freezing product work
+- Business rules stop caring which adapter answered the call
+- Roll back individual slices if something misbehaves
+
+#### Adapter sketches
+
 ```php
-// Legacy БД адаптер
+// Legacy DB adapter
 class LegacyDatabaseAdapter extends AbstractDataAdapter {
     public function fetchData($criteria) {
-        // Работаем со старой БД
         return $this->legacyConnection->query($sql);
     }
 }
 
-// REST API адаптер  
+// REST API adapter
 class RestApiAdapter extends AbstractDataAdapter {
     public function fetchData($criteria) {
-        // Ходим в новый API
         return $this->httpClient->get('/api/users/' . $criteria['id']);
     }
 }
 
-// Файловый адаптер
+// Filesystem adapter
 class FileSystemAdapter extends AbstractDataAdapter {
     public function fetchData($criteria) {
-        // Читаем из файлов
         return json_decode(file_get_contents($this->dataPath . '/' . $criteria['id'] . '.json'));
     }
 }
 ```
 
-#### 😅 Проблемы этого этапа:
-- **Сложность отладки** - данные могут быть в 5 разных местах
-- **Производительность** - N+1 проблемы в квадрате
-- **Консистентность** - транзакции становятся сложными
-- **Мониторинг** - нужно следить за всеми источниками
+#### Hybrid risks
 
-**Мой совет**: Не спешите! Это самый ответственный этап. Хорошо продумайте, какие данные куда выносить. Начните с наименее критичных частей. Обязательно добавьте логирование и мониторинг!
+- **Debugging complexity** — data may live in many physical systems
+- **Performance** — amplified N+1 patterns if fetch plans are naive
+- **Consistency** — distributed transactions rarely come for free
+- **Observability** — every source needs health checks
+
+**Practical advice:** move low-risk data first, invest in logging and tracing, and design rollback paths before flipping traffic.
 
 ---
 
-### 🏆 Этап 4: Final State (Финальная архитектура)
-*Время: 1-2 месяца (зависит от объема данных)*
+### Stage 4: Final Doctrine state
 
-#### 🏛️ Переход на Doctrine:
-- **Doctrine ORM** - промышленная ORM для долгосрочного использования
-- **Unified Database** - все данные в едином, нормализованном виде
-- **Production Ready** - стабильная, поддерживаемая система
+*Typical duration: 1–2 months depending on data volume*
 
-#### 🎯 Что получаем в итоге:
+#### Target outcome
+
+- **Doctrine ORM** for the relational core you will run long term
+- **Unified database** once ownership and schemas stabilize
+- **Production practices** — profiling, migrations, predictable deploys
+
+#### End state example
+
 ```php
-// Вместо зоопарка адаптеров:
+// Instead of many bespoke adapters:
 $user = $userApiAdapter->fetchUser($id);
-$profile = $profileDbAdapter->fetchProfile($id);  
+$profile = $profileDbAdapter->fetchProfile($id);
 $orders = $orderFileAdapter->fetchOrders($id);
 
-// Получаем красивый Doctrine код:
+// You converge on Doctrine semantics:
 $user = $userRepository->find($id);
-$profile = $user->getProfile(); // Lazy loading
-$orders = $user->getOrders(); // Ассоциации
+$profile = $user->getProfile();
+$orders = $user->getOrders();
 
-// DQL для сложных запросов:
+// Complex reads via DQL when appropriate:
 $query = $em->createQuery('
-    SELECT u, p, o FROM User u 
-    JOIN u.profile p 
-    JOIN u.orders o 
+    SELECT u, p, o FROM User u
+    JOIN u.profile p
+    JOIN u.orders o
     WHERE u.isActive = true
 ');
 ```
 
-#### 🚀 Преимущества финальной архитектуры:
-- **Стандартность** - любой PHP разработчик знает Doctrine
-- **Экосистема** - множество готовых решений и бандлов
-- **Производительность** - оптимизированные запросы и кеширование
-- **Поддержка** - активное сообщество и документация
+#### Why the finish line feels better
 
-#### 🎉 Что изменилось с начала пути:
+- Familiar tooling for most PHP teams
+- Ecosystem extras: migrations, bundles, community recipes
+- Mature performance tooling once mappings are clean
+- Ongoing documentation and support
+
+#### Mindset shift
+
 ```php
-// Было (Legacy):
-$sql = "SELECT * FROM users WHERE user_id = " . $id; // SQL injection привет!
+// Legacy style:
+$sql = "SELECT * FROM users WHERE user_id = " . $id;
 $result = mysql_query($sql);
 $user_data = mysql_fetch_assoc($result);
-if ($user_data['user_email'] != '') { // А что если null?
-    $email = $user_data['user_email'];
-}
 
-// Стало (Doctrine):
+// Doctrine style:
 $user = $userRepository->find($id);
-$email = $user->getEmail(); // Типизированный Email Value Object
-// Никаких SQL injection, null checks, magic strings!
+$email = $user->getEmail();
 ```
 
-**Мой совет**: Не расслабляйтесь! Doctrine - это мощный инструмент, но с ним тоже нужно уметь работать. Изучите лучшие практики, настройте профилирование, добавьте тесты.
+**Practical advice:** Doctrine is powerful — budget time for training, profiling, and automated tests around critical mappings.
 
 ---
 
-## 📈 Метрики прогресса
+## Progress signals
 
-### Как понять, что идете в правильном направлении:
+### How to know you are moving forward
 
-| Этап | Метрика | Хорошо | Плохо |
-|------|---------|--------|-------|
-| **Legacy** | Время на фикс бага | 2-3 дня | 1-2 недели |
-| **AEM** | Покрытие тестами | 30%+ | <10% |
-| **Hybrid** | Время деплоя | 30 минут | 3+ часа |
-| **Final** | Время разработки фичи | 2-3 дня | 1-2 недели |
+| Stage | Signal | Healthy | Concerning |
+|-------|--------|---------|------------|
+| Legacy | Time to fix typical bugs | 2–3 days | 1–2 weeks |
+| AEM | Automated test coverage | 30%+ | under 10% |
+| Hybrid | Deploy duration | ~30 minutes | 3+ hours |
+| Final | Time for medium feature | 2–3 days | 1–2 weeks |
 
-### 📊 KPI по этапам:
+### Optional metrics helper
+
 ```php
-// Можете даже автоматизировать:
 class MigrationMetrics {
     public function calculateProgress(): array {
         return [
@@ -267,53 +263,55 @@ class MigrationMetrics {
             'test_coverage' => $this->getTestCoverage(),
             'deployment_time' => $this->getAverageDeploymentTime(),
             'bug_fix_time' => $this->getAverageBugFixTime(),
-            'developer_happiness' => $this->getDeveloperHappinessScore(), // 😊
+            'developer_happiness' => $this->getDeveloperHappinessScore(),
         ];
     }
 }
 ```
 
-## 🎭 Реальные истории успеха
+## Example outcomes
 
-### История 1: E-commerce платформа
+### Story 1: E-commerce platform
+
 ```
-Было: 
-- Монолит на 500к строк кода
-- 300 таблиц в БД
-- Деплой раз в месяц
-- 3 дня на исправление бага
+Before:
+- ~500k LOC monolith
+- ~300 tables
+- Monthly deploys
+- Multi-day bug fixes
 
-Стало:
-- 15 микросервисов
-- Каждый сервис со своей БД
-- Деплой несколько раз в день
-- Баги исправляются за часы
-```
-
-### История 2: CRM система
-```
-Было:
-- Access БД (да, в 2020 году!)
-- Excel отчеты
-- Ручная синхронизация данных
-- 1 программист, который всё знает
-
-Стало:
-- PostgreSQL
-- Автоматическая аналитика
-- REST API для интеграций
-- Команда из 5 разработчиков
+After:
+- Service boundaries with focused databases
+- Deploys multiple times per day
+- Incidents traced and fixed in hours
 ```
 
-## 🚨 Когда что-то идет не так
+### Story 2: CRM modernization
 
-### Красные флаги:
-- 🔴 **Этап затягивается в 2+ раза** - пересмотрите план
-- 🔴 **Команда сопротивляется** - нужна работа с людьми
-- 🔴 **Производительность упала** - что-то не так с архитектурой
-- 🔴 **Багов стало больше** - слишком быстро меняете код
+```
+Before:
+- Desktop-era data stores
+- Manual spreadsheet reporting
+- One hero maintainer
 
-### Что делать:
+After:
+- PostgreSQL core
+- Automated analytics pipelines
+- REST APIs for integrations
+- Larger, onboardable team
+```
+
+## When things go wrong
+
+### Red flags
+
+- A stage takes **more than double** the planned time
+- **Team resistance** grows instead of shrinking
+- **Latency or throughput** regresses without a mitigation plan
+- **Defect rate climbs** right after large mechanical changes
+
+### Response loop
+
 ```php
 if ($migration->isStuck()) {
     $migration->pause();
@@ -324,21 +322,22 @@ if ($migration->isStuck()) {
 }
 ```
 
-## 💡 Лайфхаки от практика
+## Practitioner tips
 
-### 1. Документируйте все изменения
+### 1. Record decisions
+
 ```php
-// Создайте ADR (Architecture Decision Records)
+// Architecture Decision Records keep context durable
 $adr = new ArchitectureDecisionRecord();
-$adr->setTitle('Выбор стратегии миграции пользователей');
-$adr->setContext('Legacy БД содержит 50 таблиц для пользователей');
-$adr->setDecision('Используем AEM с постепенной миграцией');
-$adr->setConsequences('Возможны временные проблемы с производительностью');
+$adr->setTitle('User-domain migration strategy');
+$adr->setContext('Legacy split across dozens of user-related tables');
+$adr->setDecision('Adopt AEM first, then Doctrine per bounded context');
+$adr->setConsequences('Temporary dual-write paths until cutover completes');
 ```
 
-### 2. Автоматизируйте мониторинг
+### 2. Automate health checks
+
 ```php
-// Следите за здоровьем системы
 $healthCheck = new MigrationHealthCheck();
 $healthCheck->checkLegacyDbConnection();
 $healthCheck->checkApiAvailability();
@@ -346,36 +345,39 @@ $healthCheck->checkDataConsistency();
 $healthCheck->sendAlerts();
 ```
 
-### 3. Готовьте план отката
+### 3. Always keep a rollback path
+
 ```php
-// Всегда имейте план B
 $rollbackPlan = new RollbackPlan();
 $rollbackPlan->setRollbackWindow('2 hours');
 $rollbackPlan->setDataBackupStrategy('Full backup before each stage');
 $rollbackPlan->setRollbackTriggers(['Performance degradation > 50%', 'Error rate > 5%']);
 ```
 
-## 🎯 Заключение
+## Closing thoughts
 
-**Миграция - это не спринт, это марафон!** 
+Migration is a marathon, not a single sprint.
 
-### Формула успеха:
+### What matters most
+
 ```
-Терпение + Планирование + Постепенность = Успешная миграция
+Patience + planning + incremental steps = durable migration
 ```
 
-### Помните:
-- 🎯 **Цель** - не переписать код, а улучшить жизнь
-- 🔄 **Процесс** важнее скорости
-- 👥 **Команда** должна быть на борту
-- 📊 **Метрики** помогают не заблудиться
-- 🛡️ **Безопасность** превыше всего
+### Keep in mind
 
-### И самое главное:
-> *"Код пишется один раз, а читается тысячи. Сделайте так, чтобы через год вы сами могли понять, что здесь происходит!"* 
+- The goal is **better operational reality**, not vanity rewrites
+- **Process discipline** beats heroics
+- **Teams** need clarity, training, and wins
+- **Metrics** prevent denial
+- **Safety** beats speed when customer data is involved
+
+### Remember
+
+> Code is written once and read endlessly — future you should recognize the story this repository tells.
 
 ---
 
-**Удачи в миграции! Пусть ваш legacy код превратится в красивую современную архитектуру! 🚀**
+Good luck turning brittle legacy into a maintainable architecture.
 
-*P.S. Если что-то пошло не так - не паникуйте. В программировании нет проблем, есть только интересные задачи! 😄* 
+*P.S. When something breaks, treat it as signal to tighten feedback loops, not as a reason to panic.*
