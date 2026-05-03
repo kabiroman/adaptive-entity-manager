@@ -161,6 +161,8 @@ Example:
 ],
 ```
 
+Runnable demo in this repository: [`examples/ddd_domain_vo_demo.php`](../examples/ddd_domain_vo_demo.php) (domain class under [`examples/ddd_domain_vo/`](../examples/ddd_domain_vo/)).
+
 Criteria values use the same conversion: you may pass a value object instance and it will be converted to storage before the adapter runs. The instance must be of the field’s declared value object type (the same object you would assign to the entity property).
 
 **Implementation note:** VO capability is declared on [`ValueObjectAwareEntityManagerInterface`](../src/ValueObjectAwareEntityManagerInterface.php) (implemented by `AdaptiveEntityManager`), not on the base `EntityManagerInterface`, to avoid breaking custom interface implementations. `EntityPersister` uses a **process-wide static** entity factory; multiple independent `EntityManager` instances in one process are not fully isolated—prefer one logical manager per process.

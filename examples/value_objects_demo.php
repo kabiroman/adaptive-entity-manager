@@ -171,4 +171,6 @@ echo "Email primitive: " . var_export($email->toPrimitive(), true) . "\n";
 echo "Money primitive: " . var_export($money->toPrimitive(), true) . "\n";
 echo "UserId primitive: " . var_export($userId->toPrimitive(), true) . "\n";
 
+echo "\nSee also: examples/ddd_domain_vo_demo.php — domain value object via metadata only (no ValueObjectInterface).\n";
+
 echo "\n=== Demo Complete ===\n";

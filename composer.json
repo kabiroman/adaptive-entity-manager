@@ -33,7 +33,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Kabiroman\\AEM\\Tests\\": "tests/"
+            "Kabiroman\\AEM\\Tests\\": "tests/",
+            "Examples\\Ddd\\": "examples/ddd_domain_vo/"
         }
     },
     "config": {

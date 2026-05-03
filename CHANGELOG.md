@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Map domain value objects without `ValueObjectInterface` using field metadata options: `class` (preferred) or `valueObjectClass`, `from` (static factory, one argument), and `to` (instance method with no required parameters). When `to` is omitted, `Stringable` is used only for `value_object` fields whose runtime value matches the declared property class.
 - `ValueObjectAwareEntityManagerInterface` (extends `EntityManagerInterface`) exposes `getValueObjectRegistry()` and `hasValueObjectSupport()` so third-party `EntityManagerInterface` implementations are not forced to add VO methods.
 - `EntityPersister` converts `value_object` criteria values that are objects via the same rules as persistence (e.g. `loadAll(['email' => $emailVo])`). The object must match the field’s declared value object class (same as for flush).
+- Runnable example: `examples/ddd_domain_vo_demo.php` with a domain type that does not implement `ValueObjectInterface` (dev autoload namespace `Examples\Ddd\`).
 
 ### Changed
 
