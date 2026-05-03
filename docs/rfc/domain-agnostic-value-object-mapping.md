@@ -313,9 +313,51 @@ registry converters:
 - Criteria / persistence alignment for object values on those fields
 - Built-in `ValueObjectInterface` and converter registry path **unchanged**
 
-User-facing summary: [VALUE_OBJECTS.md](../VALUE_OBJECTS.md).
+**Code paths today (for maintainers):** hydration and row extraction for `value_object` fields run through [`ValueObjectAwareEntityFactory`](../../src/ValueObjectAwareEntityFactory.php). Types backed only by [`ValueObjectConverterRegistry`](../../src/ValueObject/Converter/ValueObjectConverterRegistry.php) still follow `ValueObjectInterface` in the default setup. Arbitrary field options are readable via [`ClassMetadata::getFieldOption()`](../../src/Metadata/AbstractClassMetadata.php) (same idea as boolean `values`).
 
-### Later Phase: Generalized Converter Contract
+**Architecture (before → after Phase 1):**
+
+```mermaid
+flowchart LR
+  subgraph today [Before Phase 1]
+    Row[DB row] --> VOFactory
+    VOFactory --> Registry[ValueObjectConverterRegistry]
+    Registry --> DefaultConv[DefaultValueObjectConverter]
+    DefaultConv --> VOI[ValueObjectInterface]
+    Entity[getEntityDataRow] --> VOI
+  end
+```
+
+```mermaid
+flowchart LR
+  subgraph target [After Phase 1 metadata path]
+    Row2[DB row] --> VOFactory2[ValueObjectAwareEntityFactory]
+    VOFactory2 --> Meta{field option from?}
+    Meta -->|yes| StaticCall[class static from]
+    Meta -->|no| Registry2[registry]
+    Entity2[getEntityDataRow] --> Extract[convertValueObjectToStorage]
+    Extract --> ToMeta[to / VOI / narrow Stringable]
+  end
+```
+
+**Implementation invariants (as shipped):**
+
+- **Types:** resolve target class from metadata and align with the property’s **`ReflectionNamedType`**. **`ReflectionUnionType` / `ReflectionIntersectionType`** on `value_object` fields are rejected in this version with an explicit error.
+- **`from`:** static call, one argument (storage value). **Validate** the return value with **`instanceof` of the target class** before assignment; surface configuration errors early instead of a late `TypeError`.
+- **`to`:** instance method with no required parameters (e.g. `__toString`). **Narrow `Stringable` fallback** only for `value_object` fields when the runtime object matches the declared/target class and policy in [`VALUE_OBJECTS.md`](../VALUE_OBJECTS.md) applies—not for arbitrary `Stringable` objects elsewhere.
+- **Nulls:** `null` from storage skips `from`; `null` on the property maps to `null` in the row without calling `to`.
+- **`ValueObjectConverterInterface`:** intentionally **not** widened to `mixed` in Phase 1; doing so would break **LSP** for user-defined converters. A broader contract belongs in a **later** public API (new interface + adapter, or a major with migration).
+- **Single extraction helper** (`convertValueObjectToStorage` / equivalent) drives both **flush (row)** and **criteria** so rules stay in one place.
+
+**Phase 1 acceptance (definition of done):**
+
+- Domain VO with metadata `class` or `valueObjectClass` + `from`/`to` (no AEM interface): hydrate and persist round-trip.
+- Existing `ValueObjectInterface` metadata and tests remain valid without mandatory changes.
+- Clear errors when `from` returns the wrong type or when the property type is union/intersection for this mapping.
+
+**Not in Phase 1:** first-class `aggregateRoot` / `reconstitute` wiring, multi-column composite value objects, or a single sweeping rewrite of all `ValueObjectInterface` docs—those remain roadmap items (see later phases and [Aggregate Mapping Direction](#aggregate-mapping-direction)).
+
+End-user documentation: [VALUE_OBJECTS.md](../VALUE_OBJECTS.md).
 
 Introduce a new converter interface that operates on `mixed` values and does not
 reference `ValueObjectInterface`.
