@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-05-03
+
 ### Added
 
 - Map domain value objects without `ValueObjectInterface` using field metadata options: `class` (preferred) or `valueObjectClass`, `from` (static factory, one argument), and `to` (instance method with no required parameters). When `to` is omitted, `Stringable` is used only for `value_object` fields whose runtime value matches the declared property class.

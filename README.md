@@ -24,14 +24,15 @@ In **hexagonal** (ports and adapters) architectures, place AEM in the infrastruc
 - Comprehensive metadata management
 - Efficient unit of work implementation
 
-## Recent Updates (v1.6.0, unreleased)
+## Recent Updates (v1.6.0)
 
 ### Domain value objects (metadata) and VO-aware manager API
 - Map **`value_object`** fields to domain types **without** `ValueObjectInterface` via metadata: `class` (preferred) or `valueObjectClass`, `from` (static factory), `to` (serialization). Details: [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md).
 - **`ValueObjectAwareEntityManagerInterface`** carries `getValueObjectRegistry()` / `hasValueObjectSupport()`; the base **`EntityManagerInterface`** no longer declares them — typehint the extended interface when you rely on VO registry helpers.
 - **`loadAll` criteria** apply the same object→storage rules as flush for `value_object` fields; the instance must match the property’s declared VO class.
 - **Stricter config:** conflicting `class` and `valueObjectClass` are rejected; conversion checks the property type before calling metadata `to`.
-- **Process-wide caveat:** one shared static entity factory per PHP process — several `EntityManager` instances with different VO/metadata setups are not fully isolated ([CHANGELOG](CHANGELOG.md), *Unreleased* → *Known limitations*).
+- **Example:** [examples/ddd_domain_vo_demo.php](examples/ddd_domain_vo_demo.php) (dev autoload `Examples\Ddd\`).
+- **Process-wide caveat:** one shared static entity factory per PHP process — several `EntityManager` instances with different VO/metadata setups are not fully isolated ([CHANGELOG](CHANGELOG.md) for **v1.6.0**, *Known limitations*).
 
 ### Earlier in v1.5.0 — Quality, CI, and tooling
 - **CI matrix** for **PHP 8.1, 8.2, 8.3, and 8.4** and a **CI status badge** in this README.
