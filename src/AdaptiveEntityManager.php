@@ -15,7 +15,7 @@ use Kabiroman\AEM\ValueObject\Converter\ValueObjectConverterRegistry;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-final class AdaptiveEntityManager implements EntityManagerInterface
+final class AdaptiveEntityManager implements ValueObjectAwareEntityManagerInterface
 {
 
     private readonly UnitOfWork $unitOfWork;

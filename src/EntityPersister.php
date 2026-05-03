@@ -2,9 +2,11 @@
 
 namespace Kabiroman\AEM;
 
+use Kabiroman\AEM\Constant\FieldTypeEnum;
 use Kabiroman\AEM\DataAdapter\EntityDataAdapter;
 use Kabiroman\AEM\EntityProxy\EntityProxyFactory;
 use Kabiroman\AEM\Mapping\LifecycleCallbackHandlerTrait;
+use Kabiroman\AEM\ValueObject\Converter\ValueObjectConverterRegistry;
 use RuntimeException;
 use SplObjectStorage;
 
@@ -35,17 +37,31 @@ class EntityPersister implements PersisterInterface
         $this->deletes = new SplObjectStorage();
 
         if (!isset(self::$entityFactory)) {
-            // Create ValueObject-aware factory if ValueObject support is enabled
-            if ($this->entityManager->hasValueObjectSupport()) {
-                self::$entityFactory = new ValueObjectAwareEntityFactory(
-                    $this->entityManager,
-                    new EntityProxyFactory($entityManager),
-                    $this->entityManager->getValueObjectRegistry()
-                );
-            } else {
-                self::$entityFactory = new EntityFactory($this->entityManager, new EntityProxyFactory($entityManager));
-            }
+            self::$entityFactory = $this->createSharedEntityFactory();
+        } elseif ($this->entityManager instanceof ValueObjectAwareEntityManagerInterface
+            && $this->entityManager->hasValueObjectSupport()
+            && !self::$entityFactory instanceof ValueObjectAwareEntityFactory) {
+            self::$entityFactory = $this->createSharedEntityFactory();
         }
+    }
+
+    private function createSharedEntityFactory(): EntityFactory
+    {
+        if ($this->entityManager instanceof ValueObjectAwareEntityManagerInterface
+            && $this->entityManager->hasValueObjectSupport()) {
+            $registry = $this->entityManager->getValueObjectRegistry();
+            if (!$registry instanceof ValueObjectConverterRegistry) {
+                throw new RuntimeException('Value object support is enabled but ValueObjectConverterRegistry is missing.');
+            }
+
+            return new ValueObjectAwareEntityFactory(
+                $this->entityManager,
+                new EntityProxyFactory($this->entityManager),
+                $registry
+            );
+        }
+
+        return new EntityFactory($this->entityManager, new EntityProxyFactory($this->entityManager));
     }
 
     public function getInserts(): iterable
@@ -306,8 +322,23 @@ class EntityPersister implements PersisterInterface
 
             // Map boolean criteria values using 'values' config (reverse mapping)
             $typeOfField = $this->classMetadata->getTypeOfField($fieldName);
-            if ($typeOfField && \Kabiroman\AEM\Constant\FieldTypeEnum::normalizeType($typeOfField) === \Kabiroman\AEM\Constant\FieldTypeEnum::Boolean->value) {
+            if ($typeOfField && FieldTypeEnum::normalizeType($typeOfField) === FieldTypeEnum::Boolean->value) {
                 $criteria[$key] = $this->mapCriteriaBooleanValue($fieldName, $criteria[$key]);
+            }
+
+            $valueForVo = $criteria[$key];
+            if (is_object($valueForVo)
+                && $typeOfField !== null
+                && FieldTypeEnum::isValueObject($typeOfField)
+                && $this->entityManager instanceof ValueObjectAwareEntityManagerInterface
+                && $this->entityManager->hasValueObjectSupport()
+                && self::$entityFactory instanceof ValueObjectAwareEntityFactory
+            ) {
+                $criteria[$key] = self::$entityFactory->convertFieldValueToStorage(
+                    $valueForVo,
+                    $this->classMetadata,
+                    $fieldName
+                );
             }
 
             $new_key = preg_replace('/'.$fieldName.'/', $this->classMetadata->getColumnOfField($fieldName), $key);
