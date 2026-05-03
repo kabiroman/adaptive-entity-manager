@@ -24,16 +24,22 @@ In **hexagonal** (ports and adapters) architectures, place AEM in the infrastruc
 - Comprehensive metadata management
 - Efficient unit of work implementation
 
-## Recent Updates (v1.4.0)
+## Recent Updates (v1.5.0)
 
-### Boolean Value Mapping and Criteria Support
-- Introduced `values` option for boolean fields to map non-standard source flags (Y/N, 0/1, T/F) to PHP bool
-- Bidirectional conversion:
-  - Inbound (row → object) during hydration
-  - Outbound (object → row) during persistence
-  - Criteria: boolean criteria values (including arrays) are mapped before adapter queries
-- Metadata API extended with `ClassMetadata::getFieldOption()` for accessing field options
-- Backward compatible: if `values` is not configured, behavior is unchanged
+### Quality, CI, and tooling
+- **CI matrix** for **PHP 8.1, 8.2, 8.3, and 8.4** and a **CI status badge** in this README.
+- **PHPStan** at **level 5** with the PHPUnit extension, a baseline quality gate, and **`composer analyse`** / **`composer check`** scripts.
+- **Targeted tests** added for flush rollback on insert failure, commit event order, preFlush lifecycle, flush with default optimized metadata, `loadAll` criteria (field-to-column and boolean source values), `PersistentCollection` lazy init, and EntityManager proxy helpers.
+- English **documentation roadmap / RFC** updates in the repo.
+
+### API and documentation
+- Nullable parameters made **explicit** where needed for **PHP 8.4** readiness.
+- Positioning refreshed around **Doctrine DBAL**, **legacy databases**, and **hexagonal** architectures.
+
+### Earlier in v1.4.0 — Boolean value mapping
+- **`values` option** for boolean fields maps non-standard source flags (Y/N, 0/1, T/F) to PHP `bool`; bidirectional hydration and persistence, plus criteria mapping before adapter queries.
+- **`ClassMetadata::getFieldOption()`** for reading arbitrary field options from metadata.
+- If `values` is omitted, behavior is unchanged.
 
 ## Requirements
 
