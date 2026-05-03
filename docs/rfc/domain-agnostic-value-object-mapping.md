@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft — **Phase 1 implemented in core**: metadata `class` / `valueObjectClass`, `from`, `to`, narrow `Stringable`, criteria conversion; `ValueObjectConverterInterface` unchanged (see [VALUE_OBJECTS.md](../VALUE_OBJECTS.md)).
+Draft, **partially implemented** in core (metadata-first path; converters unchanged). **Phase 1** in [Migration Plan](#migration-plan) reflects what shipped; see [VALUE_OBJECTS.md](../VALUE_OBJECTS.md) for user-facing details.
 
 ## Context
 
@@ -301,51 +301,56 @@ model remains focused on invariants and behavior.
 
 ## Migration Plan
 
-### Phase 1: Generalize Converter Signatures
+### Phase 1: Metadata-Based Mapping *(implemented in core)*
+
+Delivered first, **without** changing `ValueObjectConverterInterface` or existing
+registry converters:
+
+- `class` / `valueObjectClass` (with conflict rules when both are set)
+- `from` (static factory, one argument)
+- `to` (instance method, no required parameters; optional when narrow `Stringable` applies)
+- Narrow `Stringable` fallback where documented for `value_object` fields
+- Criteria / persistence alignment for object values on those fields
+- Built-in `ValueObjectInterface` and converter registry path **unchanged**
+
+User-facing summary: [VALUE_OBJECTS.md](../VALUE_OBJECTS.md).
+
+### Later Phase: Generalized Converter Contract
 
 Introduce a new converter interface that operates on `mixed` values and does not
 reference `ValueObjectInterface`.
 
 Keep adapters for existing `ValueObjectConverterInterface` implementations.
 
-### Phase 2: Add Metadata Options
+(This was previously listed as “Phase 1”; implementation intentionally started
+with metadata `from` / `to` instead.)
 
-Support field options such as:
+### Later Phase: Additional Metadata and Built-In Conventions
 
-- `class`
-- `converter`
-- `from`
-- `to`
-- `format`
-- `nullable`
+Extend field options (via `ClassMetadata::getFieldOption()` or equivalent) where
+still missing, for example:
 
-These options should be read from `ClassMetadata::getFieldOption()`.
+- `converter`, `format`, `nullable` (and any other keys still not first-class)
 
-### Phase 3: Add Built-In Converters
+Provide or expand default handling for:
 
-Provide default converters for:
+- Existing `ValueObjectInterface` *(already supported)*
+- `BackedEnum`, `JsonSerializable`, `DateTimeInterface`, and other common shapes
+  beyond the current metadata + registry split
 
-- Existing `ValueObjectInterface`
-- `Stringable` with explicit `from`
-- `BackedEnum`
-- `JsonSerializable`
-- `DateTimeInterface`
+### Later Phase: Deeper Registry Integration in Hydration / Extraction
 
-### Phase 4: Update Hydration and Extraction
+Where it still pays off, reduce direct `ValueObjectInterface` checks in favor of
+a single “is this field convertible?” path through the registry. Metadata-driven
+domain VOs already use the factory rules described in Phase 1; this phase is
+about further unification, not replacing what already works.
 
-Replace direct checks for `ValueObjectInterface` in entity hydration and row
-extraction with the new conversion registry.
+### Later Phase: Document DDD Usage
 
-The factory should ask the registry whether a property or field is convertible,
-instead of checking whether the property type implements an AEM interface.
+Expand documentation for:
 
-### Phase 5: Document DDD Usage
-
-Add separate documentation for:
-
-- Clean domain Value Objects.
-- Aggregate root repositories.
-- Reconstitution patterns.
+- Clean domain Value Objects and aggregate-friendly mapping.
+- Aggregate root repositories and reconstitution patterns.
 - When not to use lazy loading.
 - Migration from `ValueObjectInterface`.
 
