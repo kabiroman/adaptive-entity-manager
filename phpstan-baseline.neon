@@ -31,18 +31,6 @@ parameters:
 			path: src/EntityManagerInterface.php
 
 		-
-			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:getValueObjectRegistry\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/EntityPersister.php
-
-		-
-			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:hasValueObjectSupport\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/EntityPersister.php
-
-		-
 			message: '#^Call to an undefined method Kabiroman\\AEM\\EntityManagerInterface\:\:getConfig\(\)\.$#'
 			identifier: method.notFound
 			count: 2
@@ -104,12 +92,6 @@ parameters:
 
 		-
 			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: src/ValueObjectAwareEntityFactory.php
-
-		-
-			message: '#^Call to an undefined method ReflectionType\:\:isBuiltin\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/ValueObjectAwareEntityFactory.php
