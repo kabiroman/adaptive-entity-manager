@@ -5,6 +5,29 @@ All notable changes to the Adaptive Entity Manager package will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Map domain value objects without `ValueObjectInterface` using field metadata options: `class` (preferred) or `valueObjectClass`, `from` (static factory, one argument), and `to` (instance method with no required parameters). When `to` is omitted, `Stringable` is used only for `value_object` fields whose runtime value matches the declared property class.
+- `ValueObjectAwareEntityManagerInterface` (extends `EntityManagerInterface`) exposes `getValueObjectRegistry()` and `hasValueObjectSupport()` so third-party `EntityManagerInterface` implementations are not forced to add VO methods.
+- `EntityPersister` converts `value_object` criteria values that are objects via the same rules as persistence (e.g. `loadAll(['email' => $emailVo])`). The object must match the field’s declared value object class (same as for flush).
+
+### Changed
+
+- `ValueObjectAwareEntityFactory` hydrates and extracts using the above metadata; static factories must return an instance of the property’s declared class.
+- **API:** `getValueObjectRegistry()` and `hasValueObjectSupport()` were removed from `EntityManagerInterface`; use `ValueObjectAwareEntityManagerInterface` (implemented by `AdaptiveEntityManager`) where you need those calls.
+- If both metadata keys `class` and `valueObjectClass` are set to different FQCNs, configuration is rejected.
+- Non-`ValueObjectInterface` storage conversion validates the runtime value against the property type **before** invoking metadata `to` (closes criteria / `convertFieldValueToStorage` holes).
+
+### Fixed
+
+- If the first persister in a process was created without VO support, a later `EntityManager` with VO support now replaces the shared entity factory so hydration and extraction use `ValueObjectAwareEntityFactory`.
+
+### Known limitations
+
+- `EntityPersister` shares one static `EntityFactory` per PHP process. Multiple distinct `AdaptiveEntityManager` instances with different configs/registries are not fully isolated: use a single logical `EntityManager` per process, or accept that the shared factory is tied to whichever persister initialized or last upgraded it.
+
 ## [1.5.0] - 2026-05-02
 
 ### Added

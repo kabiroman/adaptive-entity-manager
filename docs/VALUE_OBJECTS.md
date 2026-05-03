@@ -23,7 +23,9 @@ Value Objects are small objects that represent a simple entity whose equality is
 
 ### 1. Creating Value Objects
 
-All Value Objects must implement `ValueObjectInterface`:
+The default `ValueObjectConverterRegistry` path expects types to implement `ValueObjectInterface` (see below). Alternatively, use **metadata** `from` / `to` on `value_object` fields so domain classes need not reference AEM — see [Domain classes without `ValueObjectInterface`](#domain-classes-without-valueobjectinterface).
+
+To use the registry and `fromPrimitive` / `toPrimitive`:
 
 ```php
 use Kabiroman\AEM\ValueObject\ValueObjectInterface;
@@ -137,6 +139,33 @@ class ProductMetadata extends AbstractClassMetadata
     ];
 }
 ```
+
+#### Domain classes without `ValueObjectInterface`
+
+For DDD-style types that must not depend on AEM, declare `type => value_object` and point AEM at a **static** factory and an **instance** extractor:
+
+- **`class`** (preferred) or **`valueObjectClass`**: must match the entity property’s PHP type. If **both** keys are set, they must specify the **same** FQCN or configuration is rejected. If only one is set, it must still match the property type when provided.
+- **`from`**: name of a **static** method on that class; one required parameter (the raw storage value). It must return an instance of the value object class.
+- **`to`** (optional for `Stringable` types): name of an **instance** method with **no required parameters** (e.g. `__toString`). If omitted, the value must implement `Stringable` and the field must remain `value_object` with a matching declared type.
+
+Unsupported in this version: **union** and **intersection** property types on `value_object` fields (a clear error is thrown).
+
+Example:
+
+```php
+'contactEmail' => [
+    'type' => 'value_object',
+    'class' => \My\Domain\Email::class,
+    'from' => 'fromString',
+    'to' => '__toString',
+],
+```
+
+Criteria values use the same conversion: you may pass a value object instance and it will be converted to storage before the adapter runs. The instance must be of the field’s declared value object type (the same object you would assign to the entity property).
+
+**Implementation note:** VO capability is declared on [`ValueObjectAwareEntityManagerInterface`](../src/ValueObjectAwareEntityManagerInterface.php) (implemented by `AdaptiveEntityManager`), not on the base `EntityManagerInterface`, to avoid breaking custom interface implementations. `EntityPersister` uses a **process-wide static** entity factory; multiple independent `EntityManager` instances in one process are not fully isolated—prefer one logical manager per process.
+
+See [RFC: Domain-agnostic value object mapping](rfc/domain-agnostic-value-object-mapping.md) for background.
 
 ### 5. Entity Manager Setup
 

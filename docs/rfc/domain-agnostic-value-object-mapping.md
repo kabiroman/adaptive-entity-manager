@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Draft — **Phase 1 implemented in core**: metadata `class` / `valueObjectClass`, `from`, `to`, narrow `Stringable`, criteria conversion; `ValueObjectConverterInterface` unchanged (see [VALUE_OBJECTS.md](../VALUE_OBJECTS.md)).
 
 ## Context
 

@@ -24,15 +24,22 @@ In **hexagonal** (ports and adapters) architectures, place AEM in the infrastruc
 - Comprehensive metadata management
 - Efficient unit of work implementation
 
-## Recent Updates (v1.5.0)
+## Recent Updates (v1.6.0, unreleased)
 
-### Quality, CI, and tooling
+### Domain value objects (metadata) and VO-aware manager API
+- Map **`value_object`** fields to domain types **without** `ValueObjectInterface` via metadata: `class` (preferred) or `valueObjectClass`, `from` (static factory), `to` (serialization). Details: [docs/VALUE_OBJECTS.md](docs/VALUE_OBJECTS.md).
+- **`ValueObjectAwareEntityManagerInterface`** carries `getValueObjectRegistry()` / `hasValueObjectSupport()`; the base **`EntityManagerInterface`** no longer declares them — typehint the extended interface when you rely on VO registry helpers.
+- **`loadAll` criteria** apply the same object→storage rules as flush for `value_object` fields; the instance must match the property’s declared VO class.
+- **Stricter config:** conflicting `class` and `valueObjectClass` are rejected; conversion checks the property type before calling metadata `to`.
+- **Process-wide caveat:** one shared static entity factory per PHP process — several `EntityManager` instances with different VO/metadata setups are not fully isolated ([CHANGELOG](CHANGELOG.md), *Unreleased* → *Known limitations*).
+
+### Earlier in v1.5.0 — Quality, CI, and tooling
 - **CI matrix** for **PHP 8.1, 8.2, 8.3, and 8.4** and a **CI status badge** in this README.
 - **PHPStan** at **level 5** with the PHPUnit extension, a baseline quality gate, and **`composer analyse`** / **`composer check`** scripts.
 - **Targeted tests** added for flush rollback on insert failure, commit event order, preFlush lifecycle, flush with default optimized metadata, `loadAll` criteria (field-to-column and boolean source values), `PersistentCollection` lazy init, and EntityManager proxy helpers.
 - English **documentation roadmap / RFC** updates in the repo.
 
-### API and documentation
+### Earlier in v1.5.0 — API and documentation
 - Nullable parameters made **explicit** where needed for **PHP 8.4** readiness.
 - Positioning refreshed around **Doctrine DBAL**, **legacy databases**, and **hexagonal** architectures.
 
