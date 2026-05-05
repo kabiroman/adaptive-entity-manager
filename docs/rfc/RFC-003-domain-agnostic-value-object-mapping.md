@@ -1,8 +1,12 @@
-# RFC: Domain-Agnostic Value Object Mapping
+# RFC-003: Domain-Agnostic Value Object Mapping
 
 ## Status
 
-Draft, **partially implemented** in core (metadata-first path; converters unchanged). **Phase 1** in [Migration Plan](#migration-plan) reflects what shipped; see [VALUE_OBJECTS.md](../VALUE_OBJECTS.md) for user-facing details.
+**Phase 1 (MVP) — implemented in core** (from v1.6.0): metadata-based mapping for domain types without `ValueObjectInterface`—`class` / `valueObjectClass`, `from`, `to`, narrow `Stringable`, criteria alignment, and the implementation rules under Phase 1 in the [Migration Plan](#migration-plan). `ValueObjectConverterInterface` and the registry were left unchanged on purpose.
+
+**Later phases** in this document (generalized converter API, more built-ins, deeper registry integration, aggregate-oriented metadata) are **proposals only**—not shipped yet; use them as a roadmap.
+
+User-facing details: [VALUE_OBJECTS.md](../VALUE_OBJECTS.md).
 
 ## Context
 

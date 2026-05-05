@@ -39,7 +39,7 @@ Key entry points:
 - [src/AdaptiveEntityManager.php](../../src/AdaptiveEntityManager.php) — primary public API.
 - [src/UnitOfWork.php](../../src/UnitOfWork.php) — commit and transaction lifecycle.
 - [src/EntityPersister.php](../../src/EntityPersister.php) — persistence flow and dirty tracking.
-- [domain-agnostic-value-object-mapping.md](../rfc/domain-agnostic-value-object-mapping.md) — direction for domain-clean Value Object mapping.
+- [RFC-003](../rfc/RFC-003-domain-agnostic-value-object-mapping.md) — direction for domain-clean Value Object mapping.
 
 ## Phase 1: Packaging and trust
 

@@ -167,7 +167,7 @@ Criteria values use the same conversion: you may pass a value object instance an
 
 **Implementation note:** VO capability is declared on [`ValueObjectAwareEntityManagerInterface`](../src/ValueObjectAwareEntityManagerInterface.php) (implemented by `AdaptiveEntityManager`), not on the base `EntityManagerInterface`, to avoid breaking custom interface implementations. `EntityPersister` uses a **process-wide static** entity factory; multiple independent `EntityManager` instances in one process are not fully isolated—prefer one logical manager per process.
 
-See [RFC: Domain-agnostic value object mapping](rfc/domain-agnostic-value-object-mapping.md) for background.
+See [RFC-003: Domain-agnostic value object mapping](rfc/RFC-003-domain-agnostic-value-object-mapping.md) for background.
 
 ### 5. Entity Manager Setup
 
